@@ -161,7 +161,7 @@ void Lepton3::setVoSPIData()
     // <<<<< VoSPI data
 }
 
-bool Lepton3::start()
+void Lepton3::start()
 {
     mThread = std::thread( &Lepton3::thread_func, this );
 }

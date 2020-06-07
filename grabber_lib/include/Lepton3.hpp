@@ -34,7 +34,7 @@ public:
     virtual ~Lepton3();
 
     
-    bool start(); //!< Start grabbing thread
+    void start(); //!< Start grabbing thread
     void stop();  //!< Stop grabbing thread
 
     /*! Returns last available 16bit frame as vector not normalized
@@ -59,7 +59,7 @@ public:
     const uint8_t* getLastFrameRGB( uint8_t& width, uint8_t& height );
     
     // >>>>> Controls
-    LEP_RESULT getSensorTemperatureK(float& tempK);          //!< Get Temperature of the Flir Sensor in °K
+    LEP_RESULT getSensorTemperatureK(float& tempK); //!< Get Temperature of the Flir Sensor in °K
     
     LEP_RESULT enableRadiometry( bool enable );    //!< Enable/Disable radiometry
     LEP_RESULT getRadiometryStatus(bool &status);  //!< Verify if Radiometry is enabled or not
