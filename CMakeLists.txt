@@ -16,4 +16,6 @@ add_subdirectory (grabber_lib)
 # OpenCV demo
 add_subdirectory (opencv_demo)
 
+# Check Fever App
+add_subdirectory (check_fever_app)
 
