@@ -363,8 +363,6 @@ void Lepton3::thread_func()
 
     mStop = false;
 
-    int ret = 0;
-
     if( !SpiOpenPort() )
     {
         cerr << "Grabber thread stopped on starting for SPI error" << "\r\n";
@@ -1067,6 +1065,8 @@ LEP_RESULT Lepton3::resetCamera()
     }
 
     cout << "..... Reset Done " << "\r\n";
+
+    return LEP_OK;
 }
 
 LEP_RESULT Lepton3::rebootCamera()
@@ -1152,6 +1152,8 @@ LEP_RESULT Lepton3::saveParams()
     }
 
     cout << "Current Parameters saved to OTP" << "\r\n";
+
+    return LEP_OK;
 }
 
 LEP_RESULT Lepton3::loadParams()
@@ -1170,6 +1172,8 @@ LEP_RESULT Lepton3::loadParams()
     }
 
     cout << "Current Parameters saved to OTP" << "\r\n";
+
+    return LEP_OK;
 }
 
 /*LEP_RESULT Lepton3::getSpotROI( uint16_t& x, uint16_t& y, uint16_t& w, uint16_t& h )
