@@ -18,6 +18,22 @@ using namespace std;
 // ----> Global variables
 Lepton3* lepton3=nullptr;
 static bool close = false;
+
+cv::Mat frame16;
+cv::Mat frameRGB;
+
+double img_scale_fact = 3.0;
+
+uint16_t min_raw16;
+uint16_t max_raw16;
+
+std::string temp_str;
+std::string win_name = "Temperature stream";
+
+// Hypothesis: sensor is linear.
+// If the range of the sensor is [-10,140] °C in High Gain mode, we can calculate the threasholds
+// for "life temperature" between 30.0°C and 37.0°C
+double scale_factor = 0.0092; // 150/(2^14-1))
 // <---- Global variables
 
 // ----> Global functions
@@ -26,6 +42,8 @@ void keyboard_handler(int key);
 
 void set_rgb_mode(bool enable);
 cv::Mat normalizeFrame( const cv::Mat& frame16, uint16_t min, uint16_t max );
+
+void mouseCallBackFunc(int event, int x, int y, int flags, void* userdata);
 // <---- Global functions
 
 int main (int argc, char *argv[])
@@ -50,7 +68,6 @@ int main (int argc, char *argv[])
 
     if( lepton3->setGainMode( LEP_SYS_GAIN_MODE_HIGH ) == LEP_OK )
     {
-
         LEP_SYS_GAIN_MODE_E gainMode;
         if( lepton3->getGainMode( gainMode ) == LEP_OK )
         {
@@ -60,16 +77,10 @@ int main (int argc, char *argv[])
     }
 
     uint64_t frameIdx=0;
-    uint16_t min;
-    uint16_t max;
+
     uint8_t w,h;
 
     // ----> People detection thresholds
-    // Hypothesis: sensor is linear.
-    // If the range of the sensor is [-10,140] °C in High Gain mode, we can calculate the threasholds
-    // for "life temperature" between 30.0°C and 37.0°C
-    double scale_factor = 0.0092; // 150/(2^14-1))
-
     double min_norm_temp = 30.0f;
     double warn_temp = 37.0f;
     double fever_temp = 37.5f;
@@ -87,13 +98,31 @@ int main (int argc, char *argv[])
     }
     // <---- People detection thresholds
 
+    // ----> Set OpenCV output window and mouse callback
+    //Create a window
+    cv::namedWindow(win_name, cv::WINDOW_AUTOSIZE);
+
+    //set the callback function for any mouse event
+    cv::setMouseCallback(win_name, mouseCallBackFunc, NULL);
+    // <---- Set OpenCV output window and mouse callback
+
     StopWatch stpWtc;
 
     stpWtc.tic();
 
+    bool initialized = false;
+
     while(!close)
     {
-        const uint16_t* data16 = lepton3->getLastFrame16( w, h, &min, &max );
+        const uint16_t* data16 = lepton3->getLastFrame16( w, h, &min_raw16, &max_raw16 );
+
+        if(!initialized)
+        {
+            frame16 = cv::Mat( h, w, CV_16UC1 );
+            frameRGB = cv::Mat( h, w, CV_8UC3 );
+
+            initialized = true;
+        }
 
         cv::Mat dispFrame;
 
@@ -104,28 +133,26 @@ int main (int argc, char *argv[])
 
             double freq = (1000.*1000.)/period_usec;
 
-            cv::Mat frame16( h, w, CV_16UC1 );
-            cv::Mat frameRGB( h, w, CV_8UC3 );
-
-
             memcpy( frame16.data, data16, w*h*sizeof(uint16_t) );
 
-            cout << " * Central value: " << (int)(frame16.at<uint16_t>(w/2 + h/2*w )) << endl;
+            //cout << " * Central value: " << (int)(frame16.at<uint16_t>(w/2 + h/2*w )) << endl;
 
             // ----> Rescaling/Normalization to 8bit
-            double diff = static_cast<double>(max - min); // Image range
+            cv::Mat rescaled;
+            frame16.copyTo(rescaled);
+            double diff = static_cast<double>(max_raw16 - min_raw16); // Image range
             double scale = 255./diff; // Scale factor
 
-            frame16 -= min; // Bias
-            frame16 *= scale; // Rescale data
+            rescaled -= min_raw16; // Bias
+            rescaled *= scale; // Rescale data
 
-            frame16.convertTo( dispFrame, CV_8UC3 );
+            rescaled.convertTo( dispFrame, CV_8UC3 );
             // <---- Rescaling/Normalization to 8bit
 
 
             cv::Mat rescaledImg;
-            cv::resize( dispFrame, rescaledImg, cv::Size(), 3.0, 3.0);
-            cv::imshow( "Stream", rescaledImg );
+            cv::resize( dispFrame, rescaledImg, cv::Size(), img_scale_fact, img_scale_fact);
+            cv::imshow( win_name, rescaledImg );
             int key = cv::waitKey(5);
             if( key == 'q' || key == 'Q')
             {
@@ -142,7 +169,7 @@ int main (int argc, char *argv[])
             }
         }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(110));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
     }
 
     delete lepton3;
@@ -255,4 +282,28 @@ cv::Mat normalizeFrame( const cv::Mat& frame16, uint16_t min, uint16_t max )
     // <<<<< Rescaling/Normalization to 8bit
 
     return frame8;
+}
+
+void mouseCallBackFunc(int event, int x, int y, int flags, void* userdata)
+{
+    if ( event == cv::EVENT_MOUSEMOVE )
+    {
+        //cout << "Mouse move over the window - position (" << x << ", " << y << ")" << endl;
+
+        int raw_x = x/img_scale_fact;
+        int raw_y = y/img_scale_fact;
+
+        /*int w = frame16.rows;
+
+        size_t idx = raw_x+raw_y*w;
+
+        uint16_t* values = (uint16_t*)(&frame16.data[0]);
+        uint16_t value = values[idx];*/
+
+        uint16_t value = frame16.at<uint16_t>(raw_y, raw_x);
+
+        double temp = value*scale_factor;
+
+        std::cout << "Temp:" << temp << "- Raw: " << value << " [" << min_raw16 << "," << max_raw16 << "]" << std::endl;
+    }
 }

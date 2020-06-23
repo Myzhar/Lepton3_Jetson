@@ -18,7 +18,7 @@ using namespace std;
 // ----> Global variables
 Lepton3* lepton3=nullptr;
 static bool close = false;
-static bool rgb_mode = false;
+static bool rgb_mode = true;
 // <---- Global variables
 
 // ----> Global functions
@@ -85,7 +85,7 @@ int main (int argc, char *argv[])
             {
                 memcpy( frame16.data, data16, w*h*sizeof(uint16_t) );
 
-                cout << " * Central value: " << (int)(frame16.at<uint16_t>(w/2 + h/2*w )) << endl;
+                //cout << " * Central value: " << (int)(frame16.at<uint16_t>(w/2 + h/2*w )) << endl;
 
                 // ----> Rescaling/Normalization to 8bit
                 double diff = static_cast<double>(max - min); // Image range
@@ -117,7 +117,7 @@ int main (int argc, char *argv[])
             }
         }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(110));
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
     }
 
     delete lepton3;
