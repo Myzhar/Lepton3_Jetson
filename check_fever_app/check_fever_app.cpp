@@ -1,5 +1,7 @@
 #include <stdlib.h>
 #include <iostream>
+#include <sstream>
+#include <iomanip>
 #include <signal.h>
 #include <string>
 #include <chrono>
@@ -19,21 +21,22 @@ using namespace std;
 Lepton3* lepton3=nullptr;
 static bool close = false;
 
-cv::Mat frame16;
-cv::Mat frameRGB;
+cv::Mat frame16; // 16bit Lepton frame RAW frame
 
-double img_scale_fact = 3.0;
+double img_scale_fact = 4.0;
 
 uint16_t min_raw16;
 uint16_t max_raw16;
 
 std::string temp_str;
 std::string win_name = "Temperature stream";
+int raw_cursor_x = -1;
+int raw_cursor_y = -1;
+uint16_t h_data = 70;
 
-// Hypothesis: sensor is linear.
-// If the range of the sensor is [-10,140] °C in High Gain mode, we can calculate the threasholds
-// for "life temperature" between 30.0°C and 37.0°C
-double scale_factor = 0.0092; // 150/(2^14-1))
+// Hypothesis: sensor is linear in 14bit dynamic
+// If the range of the sensor is [0,150] °C in High Gain mode
+double temp_scale_factor = 0.0092; // 150/(2^14-1))
 // <---- Global variables
 
 // ----> Global functions
@@ -41,9 +44,11 @@ void close_handler(int s);
 void keyboard_handler(int key);
 
 void set_rgb_mode(bool enable);
-cv::Mat normalizeFrame( const cv::Mat& frame16, uint16_t min, uint16_t max );
+void normalizeFrame(cv::Mat& in_frame16, cv::Mat& out_frame8, double min_temp, double max_temp , double rescale_fact);
 
 void mouseCallBackFunc(int event, int x, int y, int flags, void* userdata);
+
+cv::Mat& analizeFrame(const  cv::Mat& frame16);
 // <---- Global functions
 
 int main (int argc, char *argv[])
@@ -63,9 +68,10 @@ int main (int argc, char *argv[])
     lepton3 = new Lepton3( "/dev/spidev0.0", "/dev/i2c-0", deb_lvl ); // use SPI1 and I2C-1 ports
     lepton3->start();
 
-    // Set initial data mode
+    // Disable RRGB mode to get raw 14bit values
     set_rgb_mode(false); // 16 bit raw data required
 
+    // ----> High gain mode [0,150] Celsius
     if( lepton3->setGainMode( LEP_SYS_GAIN_MODE_HIGH ) == LEP_OK )
     {
         LEP_SYS_GAIN_MODE_E gainMode;
@@ -75,27 +81,30 @@ int main (int argc, char *argv[])
             cout << " * Gain mode: " << str << endl;
         }
     }
+    // <---- High gain mode [0,150] Celsius
+
+    // ----> Enable Radiometry to get values indipendent from camera temperature
+    if( lepton3->enableRadiometry( true ) != LEP_OK)
+    {
+        cerr << "Failed to enable radiometry!" << endl;
+        return EXIT_FAILURE;
+    }
+    // <---- Enable Radiometry to get values indipendent from camera temperature
 
     uint64_t frameIdx=0;
 
     uint8_t w,h;
 
     // ----> People detection thresholds
-    double min_norm_temp = 30.0f;
+    double min_norm_temp = 35.0f;
     double warn_temp = 37.0f;
     double fever_temp = 37.5f;
     double max_temp = 42.0f;
 
-    uint16_t min_norm_raw = static_cast<uint16_t>(min_norm_temp/scale_factor);
-    uint16_t warn_raw = static_cast<uint16_t>(warn_temp/scale_factor);
-    uint16_t fever_raw = static_cast<uint16_t>(fever_temp/scale_factor);
-    uint16_t max_raw = static_cast<uint16_t>(max_temp/scale_factor);
-
-    if( lepton3->enableRadiometry( true ) != LEP_OK)
-    {
-        cerr << "Failed to enable radiometry!" << endl;
-        return EXIT_FAILURE;
-    }
+    uint16_t min_norm_raw = static_cast<uint16_t>(min_norm_temp/temp_scale_factor);
+    uint16_t warn_raw = static_cast<uint16_t>(warn_temp/temp_scale_factor);
+    uint16_t fever_raw = static_cast<uint16_t>(fever_temp/temp_scale_factor);
+    uint16_t max_raw = static_cast<uint16_t>(max_temp/temp_scale_factor);
     // <---- People detection thresholds
 
     // ----> Set OpenCV output window and mouse callback
@@ -111,48 +120,68 @@ int main (int argc, char *argv[])
     stpWtc.tic();
 
     bool initialized = false;
+    cv::Mat rgbThermFrame;
+    cv::Mat textInfoFrame;
+    cv::Mat displayImg;
+    cv::Mat thermFrame;
 
     while(!close)
     {
+        // Retrieve last available frame
         const uint16_t* data16 = lepton3->getLastFrame16( w, h, &min_raw16, &max_raw16 );
 
+        // ----> Initialize OpenCV data
         if(!initialized)
         {
             frame16 = cv::Mat( h, w, CV_16UC1 );
-            frameRGB = cv::Mat( h, w, CV_8UC3 );
-
+            thermFrame = cv::Mat( h, w, CV_8UC3 );
+            displayImg = cv::Mat( h*img_scale_fact+h_data, w*img_scale_fact, CV_8UC3, cv::Scalar(0,0,0));
+            textInfoFrame = displayImg(cv::Rect(0,0,w*img_scale_fact,h_data) );
+            rgbThermFrame = displayImg(cv::Rect(0,h_data,w*img_scale_fact,h*img_scale_fact));
             initialized = true;
         }
-
-        cv::Mat dispFrame;
+        // <---- Initialize OpenCV data
 
         if( data16 )
         {
             double period_usec = stpWtc.toc();
             stpWtc.tic();
-
             double freq = (1000.*1000.)/period_usec;
+
+            // ----> Get temperature under cursor
+            double curs_temp = -273.15;
+            if(raw_cursor_x>=0 && raw_cursor_y>=0 &&
+               raw_cursor_x<w && raw_cursor_y<h)
+            {
+                // RAW value
+                uint16_t value = frame16.at<uint16_t>(raw_cursor_y, raw_cursor_x);
+                // Rescaling to get temperature
+                curs_temp = value*temp_scale_factor;
+            }
+            // <---- Get temperature under cursor
 
             memcpy( frame16.data, data16, w*h*sizeof(uint16_t) );
 
-            //cout << " * Central value: " << (int)(frame16.at<uint16_t>(w/2 + h/2*w )) << endl;
+            // ----> Normalization for displaying
+            normalizeFrame( frame16, thermFrame, 24.0, 38.5, temp_scale_factor );
+            // <---- Normalization for displaying
 
-            // ----> Rescaling/Normalization to 8bit
-            cv::Mat rescaled;
-            frame16.copyTo(rescaled);
-            double diff = static_cast<double>(max_raw16 - min_raw16); // Image range
-            double scale = 255./diff; // Scale factor
+            // ----> Image resizing
+            cv::resize( thermFrame, rgbThermFrame, cv::Size(), img_scale_fact, img_scale_fact);
+            cv::cvtColor( rgbThermFrame,rgbThermFrame, cv::COLOR_GRAY2BGR );
+            rgbThermFrame.copyTo( displayImg(cv::Rect(0,h_data,w*img_scale_fact,h*img_scale_fact)) );
+            // <---- Image resizing
 
-            rescaled -= min_raw16; // Bias
-            rescaled *= scale; // Rescale data
+            // ----> Add text info
+            textInfoFrame.setTo(0);
+            std::stringstream sstr;
+            sstr << std::fixed << std::setprecision(1) << "Cursor temperature: " << curs_temp+0.05 << " C";
+            cv::putText( textInfoFrame, sstr.str(), cv::Point(10,20),cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(241,240,236));
+            // <---- Add text info
 
-            rescaled.convertTo( dispFrame, CV_8UC3 );
-            // <---- Rescaling/Normalization to 8bit
+            // Display final  result
+            cv::imshow( win_name, displayImg );
 
-
-            cv::Mat rescaledImg;
-            cv::resize( dispFrame, rescaledImg, cv::Size(), img_scale_fact, img_scale_fact);
-            cv::imshow( win_name, rescaledImg );
             int key = cv::waitKey(5);
             if( key == 'q' || key == 'Q')
             {
@@ -265,45 +294,30 @@ void set_rgb_mode(bool enable)
     }
 }
 
-cv::Mat normalizeFrame( const cv::Mat& frame16, uint16_t min, uint16_t max )
+void normalizeFrame( cv::Mat& in_frame16, cv::Mat& out_frame8, double min_temp, double max_temp , double rescale_fact)
 {
-    cv::Mat tmp16;
-    frame16.copyTo( tmp16);
+    // ----> Rescaling/Normalization to 8bit
+    uint16_t min_scale = (uint16_t)(min_temp/rescale_fact);
+    uint16_t max_scale = (uint16_t)(max_temp/rescale_fact);
 
-    // >>>>> Rescaling/Normalization to 8bit
-    double diff = static_cast<double>(max - min); // Image range
+    cv::Mat rescaled;
+    in_frame16.copyTo(rescaled);
+
+    double diff = static_cast<double>(max_scale - min_scale); // Image range
     double scale = 255./diff; // Scale factor
 
-    tmp16 -= min; // Bias
-    tmp16 *= scale; // Rescale data
+    rescaled -= min_scale; // Bias
+    rescaled *= scale; // Rescale data
 
-    cv::Mat frame8;
-    tmp16.convertTo( frame8, CV_8UC1 );
-    // <<<<< Rescaling/Normalization to 8bit
-
-    return frame8;
+    rescaled.convertTo( out_frame8, CV_8U );
+    // <---- Rescaling/Normalization to 8bit
 }
 
 void mouseCallBackFunc(int event, int x, int y, int flags, void* userdata)
 {
     if ( event == cv::EVENT_MOUSEMOVE )
     {
-        //cout << "Mouse move over the window - position (" << x << ", " << y << ")" << endl;
-
-        int raw_x = x/img_scale_fact;
-        int raw_y = y/img_scale_fact;
-
-        /*int w = frame16.rows;
-
-        size_t idx = raw_x+raw_y*w;
-
-        uint16_t* values = (uint16_t*)(&frame16.data[0]);
-        uint16_t value = values[idx];*/
-
-        uint16_t value = frame16.at<uint16_t>(raw_y, raw_x);
-
-        double temp = value*scale_factor;
-
-        std::cout << "Temp:" << temp << "- Raw: " << value << " [" << min_raw16 << "," << max_raw16 << "]" << std::endl;
+        raw_cursor_x = x/img_scale_fact;
+        raw_cursor_y = (y-h_data)/img_scale_fact;
     }
 }
