@@ -34,6 +34,8 @@ int raw_cursor_y = -1;
 // Hypothesis: sensor is linear in 14bit dynamic
 // If the range of the sensor is [0,150] °C in High Gain mode
 double temp_scale_factor = 0.0092; // 150/(2^14-1))
+
+double simul_temp = 0.0;
 // <---- Global variables
 
 // ----> Constants
@@ -107,13 +109,6 @@ int main (int argc, char *argv[])
 
     uint8_t w,h;
 
-    // ----> People detection thresholds
-    uint16_t min_norm_raw = static_cast<uint16_t>(min_human_temp/temp_scale_factor);
-    uint16_t warn_raw = static_cast<uint16_t>(warn_temp/temp_scale_factor);
-    uint16_t fever_raw = static_cast<uint16_t>(fever_temp/temp_scale_factor);
-    uint16_t max_raw = static_cast<uint16_t>(max_human_temp/temp_scale_factor);
-    // <---- People detection thresholds
-
     // ----> Set OpenCV output window and mouse callback
     //Create a window
     cv::namedWindow(win_name, cv::WINDOW_AUTOSIZE);
@@ -165,17 +160,20 @@ int main (int argc, char *argv[])
             }
             // <---- Get temperature under cursor
 
+            // Data copy on OpenCV image
             memcpy( frame16.data, data16, w*h*sizeof(uint16_t) );
 
             // ----> Normalization for displaying
             normalizeFrame( frame16, thermFrame, 24.0, 38.5, temp_scale_factor );
+            // Conversion to RGB
             cv::cvtColor( thermFrame, thermFrame, cv::COLOR_GRAY2BGR );
             // <---- Normalization for displaying
 
             // ----> Human temperature colors
             for( int i=0; i<(w*h); i++ )
             {
-                double temp = data16[i]*temp_scale_factor+0.05;
+                // Temperature from thermal data adjusted for simulation
+                double temp = (data16[i]*temp_scale_factor+0.05) + simul_temp;
                 int x = i%w;
                 int y = i/w;
 
@@ -189,27 +187,34 @@ int main (int argc, char *argv[])
                 }
                 else if( temp >= warn_temp && temp < fever_temp )
                 {
-                    temp_col[0] = WARN_TEMP_COL[0];
-                    temp_col[1] = WARN_TEMP_COL[1];
-                    temp_col[2] = WARN_TEMP_COL[2];
+                    temp_col[0] = (double)temp_col[0]/255. * WARN_TEMP_COL[0];
+                    temp_col[1] = (double)temp_col[1]/255. * WARN_TEMP_COL[1];
+                    temp_col[2] = (double)temp_col[2]/255. * WARN_TEMP_COL[2];
                 }
                 else if( temp >= fever_temp && temp < max_human_temp )
                 {
-                    temp_col[0] = FEVER_TEMP_COL[0];
-                    temp_col[1] = FEVER_TEMP_COL[1];
-                    temp_col[2] = FEVER_TEMP_COL[2];
+                    temp_col[0] = (double)temp_col[0]/255. * FEVER_TEMP_COL[0];
+                    temp_col[1] = (double)temp_col[1]/255. * FEVER_TEMP_COL[1];
+                    temp_col[2] = (double)temp_col[2]/255. * FEVER_TEMP_COL[2];
                 }
             }
             // <---- Human temperature colors
 
-            // ----> Image resizing
+            // Image resizing
             cv::resize( thermFrame, rgbThermFrame, cv::Size(), IMG_RESIZE_FACT, IMG_RESIZE_FACT, cv::INTER_CUBIC);
+
+            // ----> Draw cursor
+            if(curs_temp!=-273.15)
+            {
+                cv::drawMarker( rgbThermFrame, cv::Point(raw_cursor_x,raw_cursor_y), cv::Scalar(200,20,20), cv::MARKER_DIAMOND, 20, 2, cv::LINE_AA );
+            }
+            // <---- Draw cursor
+
             rgbThermFrame.copyTo( displayImg(cv::Rect(0,H_TXT_INFO,w*IMG_RESIZE_FACT,h*IMG_RESIZE_FACT)) );
-            // <---- Image resizing
 
             // ----> Add text info
             textInfoFrame.setTo(0);
-            cv::putText( textInfoFrame, "Cursor temperature: ", cv::Point(10,20),cv::FONT_HERSHEY_SIMPLEX, 0.5, TXT_COL);
+            cv::putText( textInfoFrame, "Cursor temperature: ", cv::Point(10,20),cv::FONT_HERSHEY_SIMPLEX, 0.5, TXT_COL, 1, cv::LINE_AA );
             cv::Scalar temp_col;
             if( curs_temp >= min_human_temp && curs_temp < warn_temp )
             {
@@ -228,9 +233,17 @@ int main (int argc, char *argv[])
                 temp_col = TXT_COL;
             }
 
+            // Cursor temperature
             std::stringstream sstr;
             sstr << std::fixed << std::setprecision(1) << curs_temp << " C";
-            cv::putText( textInfoFrame, sstr.str(), cv::Point(175,20),cv::FONT_HERSHEY_SIMPLEX, 0.5, temp_col, 2);
+            if( curs_temp != -273.15 )
+                cv::putText( textInfoFrame, sstr.str(), cv::Point(175,20),cv::FONT_HERSHEY_SIMPLEX, 0.5, temp_col, 2, cv::LINE_AA);
+            else
+                cv::putText( textInfoFrame, "---", cv::Point(175,20),cv::FONT_HERSHEY_SIMPLEX, 0.5, temp_col, 2, cv::LINE_AA);
+
+            // Simulated temperature
+            sstr << std::fixed << std::showpos << std::setprecision(1) << "Simulated temperature: " << simul_temp << " C";
+            cv::putText( textInfoFrame, sstr.str(), cv::Point(10,50),cv::FONT_HERSHEY_SIMPLEX, 0.5, TXT_COL, 1, cv::LINE_AA);
             // <---- Add text info
 
             // Display final  result
@@ -285,6 +298,22 @@ void keyboard_handler(int key)
         {
             cout << " * Radiometry FFC completed" << endl;
         }
+        break;
+
+    case '+':
+    case 'u':
+    case 'U':
+        simul_temp += 0.5;
+        if(simul_temp>3.0)
+            simul_temp = 3.0;
+        break;
+
+    case '-':
+    case 'd':
+    case 'D':
+        simul_temp -= 0.5;
+        if(simul_temp<0.0)
+            simul_temp = 0.0;
         break;
 
     default:
