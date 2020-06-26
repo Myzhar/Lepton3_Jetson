@@ -158,6 +158,11 @@ int main (int argc, char *argv[])
                 // Rescaling to get temperature
                 curs_temp = value*temp_scale_factor+0.05;
             }
+
+            if( curs_temp >= min_human_temp && curs_temp <= max_human_temp )
+            {
+                curs_temp += simul_temp;
+            }
             // <---- Get temperature under cursor
 
             // Data copy on OpenCV image
@@ -170,35 +175,66 @@ int main (int argc, char *argv[])
             // <---- Normalization for displaying
 
             // ----> Human temperature colors
+
+            int count_human=0;
+            int count_warning=0;
+            int count_fever=0;
             for( int i=0; i<(w*h); i++ )
             {
                 // Temperature from thermal data adjusted for simulation
-                double temp = (data16[i]*temp_scale_factor+0.05) + simul_temp;
-                int x = i%w;
-                int y = i/w;
+                double temp = (data16[i]*temp_scale_factor+0.05);
 
-                cv::Vec3b& temp_col = thermFrame.at<cv::Vec3b>(y,x);
+                if( temp >= min_human_temp && temp <= max_human_temp )
+                {
+                    count_human++;
+                    temp += simul_temp;
 
-                if( temp >= min_human_temp && temp < warn_temp )
-                {
-                    temp_col[0] = (double)temp_col[0]/255. * NORM_TEMP_COL[0];
-                    temp_col[1] = (double)temp_col[1]/255. * NORM_TEMP_COL[1];
-                    temp_col[2] = (double)temp_col[2]/255. * NORM_TEMP_COL[2];
-                }
-                else if( temp >= warn_temp && temp < fever_temp )
-                {
-                    temp_col[0] = (double)temp_col[0]/255. * WARN_TEMP_COL[0];
-                    temp_col[1] = (double)temp_col[1]/255. * WARN_TEMP_COL[1];
-                    temp_col[2] = (double)temp_col[2]/255. * WARN_TEMP_COL[2];
-                }
-                else if( temp >= fever_temp && temp < max_human_temp )
-                {
-                    temp_col[0] = (double)temp_col[0]/255. * FEVER_TEMP_COL[0];
-                    temp_col[1] = (double)temp_col[1]/255. * FEVER_TEMP_COL[1];
-                    temp_col[2] = (double)temp_col[2]/255. * FEVER_TEMP_COL[2];
+                    int u = i%w;
+                    int v = i/w;
+                    cv::Vec3b& temp_col = thermFrame.at<cv::Vec3b>(v,u);
+
+                    if( temp >= min_human_temp && temp < warn_temp )
+                    {
+                        temp_col[0] = (double)temp_col[0]/255. * NORM_TEMP_COL[0];
+                        temp_col[1] = (double)temp_col[1]/255. * NORM_TEMP_COL[1];
+                        temp_col[2] = (double)temp_col[2]/255. * NORM_TEMP_COL[2];
+                    }
+                    else if( temp >= warn_temp && temp < fever_temp )
+                    {
+                        temp_col[0] = (double)temp_col[0]/255. * WARN_TEMP_COL[0];
+                        temp_col[1] = (double)temp_col[1]/255. * WARN_TEMP_COL[1];
+                        temp_col[2] = (double)temp_col[2]/255. * WARN_TEMP_COL[2];
+                        count_warning++;
+                    }
+                    else if( temp >= fever_temp && temp <= max_human_temp )
+                    {
+                        temp_col[0] = (double)temp_col[0]/255. * FEVER_TEMP_COL[0];
+                        temp_col[1] = (double)temp_col[1]/255. * FEVER_TEMP_COL[1];
+                        temp_col[2] = (double)temp_col[2]/255. * FEVER_TEMP_COL[2];
+                        count_fever++;
+                    }
                 }
             }
             // <---- Human temperature colors
+
+            // ----> Fever status
+            std::string fever_str = "---";
+            if( count_human>0 )
+            {
+                if( ((double)count_fever/count_human)>0.1 )
+                {
+                    fever_str = "FEVER ALERT";
+                }
+                else if( ((double)count_warning/count_human)>0.1 )
+                {
+                    fever_str = "FEVER WARN";
+                }
+                else
+                {
+                    fever_str = "NO FEVER";
+                }
+            }
+            // <---- Fever status
 
             // Image resizing
             cv::resize( thermFrame, rgbThermFrame, cv::Size(), IMG_RESIZE_FACT, IMG_RESIZE_FACT, cv::INTER_CUBIC);
@@ -206,7 +242,8 @@ int main (int argc, char *argv[])
             // ----> Draw cursor
             if(curs_temp!=-273.15)
             {
-                cv::drawMarker( rgbThermFrame, cv::Point(raw_cursor_x,raw_cursor_y), cv::Scalar(200,20,20), cv::MARKER_DIAMOND, 20, 2, cv::LINE_AA );
+                cv::drawMarker( rgbThermFrame, cv::Point(raw_cursor_x*IMG_RESIZE_FACT,raw_cursor_y*IMG_RESIZE_FACT),
+                                cv::Scalar(200,20,20), cv::MARKER_DIAMOND, 10, 1, cv::LINE_AA );
             }
             // <---- Draw cursor
 
@@ -234,16 +271,23 @@ int main (int argc, char *argv[])
             }
 
             // Cursor temperature
-            std::stringstream sstr;
-            sstr << std::fixed << std::setprecision(1) << curs_temp << " C";
+            std::stringstream sstr_temp;
+            sstr_temp << std::fixed << std::setprecision(1) << curs_temp << " C";
             if( curs_temp != -273.15 )
-                cv::putText( textInfoFrame, sstr.str(), cv::Point(175,20),cv::FONT_HERSHEY_SIMPLEX, 0.5, temp_col, 2, cv::LINE_AA);
+                cv::putText( textInfoFrame, sstr_temp.str(), cv::Point(175,20),cv::FONT_HERSHEY_SIMPLEX, 0.5, temp_col, 2, cv::LINE_AA);
             else
                 cv::putText( textInfoFrame, "---", cv::Point(175,20),cv::FONT_HERSHEY_SIMPLEX, 0.5, temp_col, 2, cv::LINE_AA);
 
             // Simulated temperature
-            sstr << std::fixed << std::showpos << std::setprecision(1) << "Simulated temperature: " << simul_temp << " C";
-            cv::putText( textInfoFrame, sstr.str(), cv::Point(10,50),cv::FONT_HERSHEY_SIMPLEX, 0.5, TXT_COL, 1, cv::LINE_AA);
+            std::stringstream sstr_simul;
+            sstr_simul << std::fixed << std::showpos << std::setprecision(1) << "Simulated temperature: " << simul_temp << " C";
+            cv::putText( textInfoFrame, sstr_simul.str(), cv::Point(10,50),cv::FONT_HERSHEY_SIMPLEX, 0.5, TXT_COL, 1, cv::LINE_AA);
+
+            cv::line( textInfoFrame, cv::Point(textInfoFrame.cols/2,0), cv::Point(textInfoFrame.cols/2,textInfoFrame.rows),
+                      cv::Scalar::all(255), 2, cv::LINE_AA );
+
+            cv::putText( textInfoFrame, "STATUS", cv::Point(420,25),cv::FONT_HERSHEY_SIMPLEX, 0.75, TXT_COL, 1, cv::LINE_AA);
+            cv::putText( textInfoFrame, fever_str, cv::Point(380,58),cv::FONT_HERSHEY_SIMPLEX, 0.95, temp_col, 2, cv::LINE_AA);
             // <---- Add text info
 
             // Display final  result
