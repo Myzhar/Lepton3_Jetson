@@ -27,7 +27,7 @@ uint16_t min_raw16;
 uint16_t max_raw16;
 
 std::string temp_str;
-std::string win_name = "Temperature stream";
+std::string win_name = "Jetson Nano Fever Control - Walter Lucetti";
 int raw_cursor_x = -1;
 int raw_cursor_y = -1;
 
@@ -38,14 +38,22 @@ double temp_scale_factor = 0.0092; // 150/(2^14-1))
 double simul_temp = 0.0;
 // <---- Global variables
 
+// ----> Defines
+#define FONT_FACE cv::FONT_HERSHEY_SIMPLEX
+
 // ----> Constants
 const uint16_t H_TXT_INFO = 70;
 const double IMG_RESIZE_FACT = 4.0;
 
-const cv::Scalar NORM_TEMP_COL(15,200,15);
-const cv::Scalar WARN_TEMP_COL(10,170,200);
-const cv::Scalar FEVER_TEMP_COL(40,40,220);
-const cv::Scalar TXT_COL(241,240,236);
+const cv::Scalar COL_NORM_TEMP(15,200,15);
+const cv::Scalar COL_WARN_TEMP(10,170,200);
+const cv::Scalar COL_FEVER_TEMP(40,40,220);
+const cv::Scalar COL_TXT(241,240,236);
+
+const std::string STR_FEVER = "FEVER ALERT";
+const std::string STR_WARN = "FEVER WARNING";
+const std::string STR_NORM = "NO FEVER";
+const std::string STR_NO_HUMAN = "---";
 
 const double min_human_temp = 34.5f;
 const double warn_temp = 37.0f;
@@ -76,6 +84,16 @@ int main (int argc, char *argv[])
     sigIntHandler.sa_flags = 0;
     sigaction(SIGINT, &sigIntHandler, NULL);
     // <---- Set Ctrl+C handler
+
+    // ----> Setup GUI
+    int baseline;
+    cv::Size size_fever = cv::getTextSize( STR_FEVER, FONT_FACE, 0.95, 2, &baseline );
+    cv::Size size_warn = cv::getTextSize( STR_WARN, FONT_FACE, 0.95, 2, &baseline );
+    cv::Size size_norm = cv::getTextSize( STR_NORM, FONT_FACE, 0.95, 2, &baseline );
+    cv::Size size_none = cv::getTextSize( STR_NO_HUMAN, FONT_FACE, 0.95, 2, &baseline );
+
+    cv::Size size_status_str = cv::getTextSize( "STATUS", FONT_FACE, 0.75, 1, &baseline );
+    // <---- Setup GUI
 
     Lepton3::DebugLvl deb_lvl = Lepton3::DBG_NONE;
 
@@ -169,7 +187,7 @@ int main (int argc, char *argv[])
             memcpy( frame16.data, data16, w*h*sizeof(uint16_t) );
 
             // ----> Normalization for displaying
-            normalizeFrame( frame16, thermFrame, 24.0, 38.5, temp_scale_factor );
+            normalizeFrame( frame16, thermFrame, min_human_temp-7.5, fever_temp+1.0, temp_scale_factor );
             // Conversion to RGB
             cv::cvtColor( thermFrame, thermFrame, cv::COLOR_GRAY2BGR );
             // <---- Normalization for displaying
@@ -195,22 +213,22 @@ int main (int argc, char *argv[])
 
                     if( temp >= min_human_temp && temp < warn_temp )
                     {
-                        temp_col[0] = (double)temp_col[0]/255. * NORM_TEMP_COL[0];
-                        temp_col[1] = (double)temp_col[1]/255. * NORM_TEMP_COL[1];
-                        temp_col[2] = (double)temp_col[2]/255. * NORM_TEMP_COL[2];
+                        temp_col[0] = (double)temp_col[0]/255. * COL_NORM_TEMP[0];
+                        temp_col[1] = (double)temp_col[1]/255. * COL_NORM_TEMP[1];
+                        temp_col[2] = (double)temp_col[2]/255. * COL_NORM_TEMP[2];
                     }
                     else if( temp >= warn_temp && temp < fever_temp )
                     {
-                        temp_col[0] = (double)temp_col[0]/255. * WARN_TEMP_COL[0];
-                        temp_col[1] = (double)temp_col[1]/255. * WARN_TEMP_COL[1];
-                        temp_col[2] = (double)temp_col[2]/255. * WARN_TEMP_COL[2];
+                        temp_col[0] = (double)temp_col[0]/255. * COL_WARN_TEMP[0];
+                        temp_col[1] = (double)temp_col[1]/255. * COL_WARN_TEMP[1];
+                        temp_col[2] = (double)temp_col[2]/255. * COL_WARN_TEMP[2];
                         count_warning++;
                     }
                     else if( temp >= fever_temp && temp <= max_human_temp )
                     {
-                        temp_col[0] = (double)temp_col[0]/255. * FEVER_TEMP_COL[0];
-                        temp_col[1] = (double)temp_col[1]/255. * FEVER_TEMP_COL[1];
-                        temp_col[2] = (double)temp_col[2]/255. * FEVER_TEMP_COL[2];
+                        temp_col[0] = (double)temp_col[0]/255. * COL_FEVER_TEMP[0];
+                        temp_col[1] = (double)temp_col[1]/255. * COL_FEVER_TEMP[1];
+                        temp_col[2] = (double)temp_col[2]/255. * COL_FEVER_TEMP[2];
                         count_fever++;
                     }
                 }
@@ -218,21 +236,30 @@ int main (int argc, char *argv[])
             // <---- Human temperature colors
 
             // ----> Fever status
-            std::string fever_str = "---";
+            std::string fever_str = STR_NO_HUMAN;
+            cv::Scalar fever_col = COL_TXT;
+            int txt_fever_x = textInfoFrame.cols/2 + (textInfoFrame.cols/2-size_none.width)/2;
+            int txt_status_x = textInfoFrame.cols/2 + (textInfoFrame.cols/2-size_status_str.width)/2;
             if( count_human>0 )
             {
                 if( ((double)count_fever/count_human)>0.1 )
                 {
-                    fever_str = "FEVER ALERT";
+                    fever_str = STR_FEVER;
+                    fever_col = COL_FEVER_TEMP;
+                    txt_fever_x = textInfoFrame.cols/2 +(textInfoFrame.cols/2-size_fever.width)/2;
                 }
                 else if( ((double)count_warning/count_human)>0.1 )
                 {
-                    fever_str = "FEVER WARN";
+                    fever_str = STR_WARN;
+                    fever_col = COL_WARN_TEMP;
+                    txt_fever_x = textInfoFrame.cols/2 +(textInfoFrame.cols/2-size_warn.width)/2;
                 }
                 else
                 {
-                    fever_str = "NO FEVER";
-                }
+                    fever_str = STR_NORM;
+                    fever_col = COL_NORM_TEMP;
+                    txt_fever_x = textInfoFrame.cols/2 +(textInfoFrame.cols/2-size_norm.width)/2;
+                };
             }
             // <---- Fever status
 
@@ -243,7 +270,7 @@ int main (int argc, char *argv[])
             if(curs_temp!=-273.15)
             {
                 cv::drawMarker( rgbThermFrame, cv::Point(raw_cursor_x*IMG_RESIZE_FACT,raw_cursor_y*IMG_RESIZE_FACT),
-                                cv::Scalar(200,20,20), cv::MARKER_DIAMOND, 10, 1, cv::LINE_AA );
+                                cv::Scalar(200,20,20), cv::MARKER_CROSS, 15, 2, cv::LINE_AA );
             }
             // <---- Draw cursor
 
@@ -251,43 +278,44 @@ int main (int argc, char *argv[])
 
             // ----> Add text info
             textInfoFrame.setTo(0);
-            cv::putText( textInfoFrame, "Cursor temperature: ", cv::Point(10,20),cv::FONT_HERSHEY_SIMPLEX, 0.5, TXT_COL, 1, cv::LINE_AA );
+            cv::putText( textInfoFrame, "Cursor temperature: ", cv::Point(10,20),FONT_FACE, 0.5, COL_TXT, 1, cv::LINE_AA );
             cv::Scalar temp_col;
             if( curs_temp >= min_human_temp && curs_temp < warn_temp )
             {
-                temp_col = WARN_TEMP_COL;
+                temp_col = COL_NORM_TEMP;
             }
             else if( curs_temp >= warn_temp && curs_temp < fever_temp )
             {
-                temp_col = WARN_TEMP_COL;
+                temp_col = COL_WARN_TEMP;
             }
             else if( curs_temp >= fever_temp && curs_temp < max_human_temp )
             {
-                temp_col = FEVER_TEMP_COL;
+                temp_col = COL_FEVER_TEMP;
             }
             else
             {
-                temp_col = TXT_COL;
+                temp_col = COL_TXT;
             }
 
             // Cursor temperature
             std::stringstream sstr_temp;
             sstr_temp << std::fixed << std::setprecision(1) << curs_temp << " C";
             if( curs_temp != -273.15 )
-                cv::putText( textInfoFrame, sstr_temp.str(), cv::Point(175,20),cv::FONT_HERSHEY_SIMPLEX, 0.5, temp_col, 2, cv::LINE_AA);
+                cv::putText( textInfoFrame, sstr_temp.str(), cv::Point(180,20),FONT_FACE, 0.5, temp_col, 2, cv::LINE_AA);
             else
-                cv::putText( textInfoFrame, "---", cv::Point(175,20),cv::FONT_HERSHEY_SIMPLEX, 0.5, temp_col, 2, cv::LINE_AA);
+                cv::putText( textInfoFrame, "---", cv::Point(175,20),FONT_FACE, 0.5, temp_col, 2, cv::LINE_AA);
 
             // Simulated temperature
             std::stringstream sstr_simul;
             sstr_simul << std::fixed << std::showpos << std::setprecision(1) << "Simulated temperature: " << simul_temp << " C";
-            cv::putText( textInfoFrame, sstr_simul.str(), cv::Point(10,50),cv::FONT_HERSHEY_SIMPLEX, 0.5, TXT_COL, 1, cv::LINE_AA);
+            cv::putText( textInfoFrame, sstr_simul.str(), cv::Point(10,50),FONT_FACE, 0.5, COL_TXT, 1, cv::LINE_AA);
 
             cv::line( textInfoFrame, cv::Point(textInfoFrame.cols/2,0), cv::Point(textInfoFrame.cols/2,textInfoFrame.rows),
                       cv::Scalar::all(255), 2, cv::LINE_AA );
 
-            cv::putText( textInfoFrame, "STATUS", cv::Point(420,25),cv::FONT_HERSHEY_SIMPLEX, 0.75, TXT_COL, 1, cv::LINE_AA);
-            cv::putText( textInfoFrame, fever_str, cv::Point(380,58),cv::FONT_HERSHEY_SIMPLEX, 0.95, temp_col, 2, cv::LINE_AA);
+            // Fever status
+            cv::putText( textInfoFrame, "STATUS", cv::Point(txt_status_x,25), FONT_FACE, 0.75, COL_TXT, 1, cv::LINE_AA);
+            cv::putText( textInfoFrame, fever_str, cv::Point(txt_fever_x,58), FONT_FACE, 0.95, fever_col, 2, cv::LINE_AA);
             // <---- Add text info
 
             // Display final  result
@@ -308,8 +336,6 @@ int main (int argc, char *argv[])
                 cout << "> Frame period: " << period_usec <<  " usec - FPS: " << freq << endl;
             }
         }
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(5));
     }
 
     delete lepton3;
@@ -347,7 +373,7 @@ void keyboard_handler(int key)
     case '+':
     case 'u':
     case 'U':
-        simul_temp += 0.5;
+        simul_temp += 0.1;
         if(simul_temp>3.0)
             simul_temp = 3.0;
         break;
@@ -355,7 +381,7 @@ void keyboard_handler(int key)
     case '-':
     case 'd':
     case 'D':
-        simul_temp -= 0.5;
+        simul_temp -= 0.1;
         if(simul_temp<0.0)
             simul_temp = 0.0;
         break;
