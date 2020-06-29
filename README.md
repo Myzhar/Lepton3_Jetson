@@ -2,6 +2,8 @@
 
 Library and examples to connect the FLIR Lepton3 thermal camera to Nvidia Jetson embedded boards
 
+<img src="images/Lepton3.jpg" width="100" height="100">
+
 ## Prerequisites
 
 * [Flir Lepton 3 module](https://www.flir.it/products/lepton/?model=500-0276-01) (can work also with Lepton 3.5)
@@ -31,7 +33,12 @@ $ cd ..
 ```
 
 ## Camera connection
+
+<img src="images/Connections.png" width="100" height="100">
+
 Detailed instruction about how to connect the Lepton3 module to a Nvidia Jetson Nano are available on [Myzhar website](https://www.myzhar.com/blog/?p=4500)
+
+<img src="images/JetsonNanoGPIO.jpg" width="100" height="100">
 
 ## Run the Demo
 Two examples are provided to illustrate how to use the `lepton3_grabber` static library available in the folder `build/grabber_lib`.
