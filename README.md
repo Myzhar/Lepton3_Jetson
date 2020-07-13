@@ -42,7 +42,13 @@ Detailed instruction about how to connect the Lepton3 module to a Nvidia Jetson 
 
 <img src="images/JetsonNanoGPIO.jpg" width="250" height="250">
 
-## Run the Demo
+### SPI buffer size change
+
+The default buffer size use for SPI communication is set to 4096 bytes by the spidev module. Lepton3 requires 20KB of buffer to retrieve a full segment of data that composes the thermal image.
+
+You can get the procedure to change the size of the SPI buffer for the Jetson Nano on the [Myzhar's blog](https://www.myzhar.com/blog/jetson-nano-with-flir-lepton3/#Change_SPI_buffer_size).
+
+## Run the Demos
 
 Two examples are provided to illustrate how to use the `lepton3_grabber` static library available in the folder `build/grabber_lib`.
 
@@ -77,6 +83,8 @@ $ ./check_fever_app
 Using keyboard `u`/`d` you can increase/decrease the estimated temperature su simulate person fever.
 
 See the demo on [YouTube](https://youtu.be/SFStaq--3-U) 
+
+<img src="images/FeverNormal.png" width="250" height="250"> | <img src="images/FeverWarning.png" width="250" height="250"> | <img src="images/FeverAlert.png" width="250" height="250">
 
     
 
