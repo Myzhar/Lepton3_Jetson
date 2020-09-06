@@ -2,8 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QThread>
 
-#include <sl/Camera.hpp>
+#include "grabber.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -17,14 +18,14 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-protected:
-    bool openZed();
+protected slots:
+    void onNewZedImage();
+    void onNewZedObjList();
 
 private:
     Ui::MainWindow *ui;
 
-    sl::Camera mZed;
-    uint16_t mZedW=0;
-    uint16_t mZedH=0;
+    Grabber mGrabber;
+
 };
 #endif // MAINWINDOW_H

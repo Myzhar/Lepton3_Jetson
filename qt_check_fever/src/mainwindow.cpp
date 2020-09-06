@@ -2,7 +2,7 @@
 #include "./ui_mainwindow.h"
 
 #include <QMessageBox>
-#include <QThread>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -14,15 +14,24 @@ MainWindow::MainWindow(QWidget *parent)
 
     do
     {
-        zed_ok = openZed();
+        zed_ok = mGrabber.openZed();
 
         if(!zed_ok)
         {
-            QMessageBox::critical(this, tr("Error"), tr("Please connect a ZED2 Camera") );
+            if( QMessageBox::StandardButton::Abort == QMessageBox::critical(this, tr("Error"), tr("Please connect a ZED2 Camera"),
+                                  QMessageBox::StandardButton::Abort|QMessageBox::StandardButton::Ok) )
+            {
+                exit(EXIT_FAILURE);
+            }
 
             QThread::msleep(1000);
         }
     } while(!zed_ok);
+
+    connect( &mGrabber, &Grabber::zedImageReady, this, &MainWindow::onNewZedImage );
+    connect( &mGrabber, &Grabber::zedObjListReady, this, &MainWindow::onNewZedObjList );
+
+    mGrabber.startCapture();
 }
 
 MainWindow::~MainWindow()
@@ -30,31 +39,18 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-bool MainWindow::openZed()
+void MainWindow::onNewZedImage()
 {
-    if(mZed.isOpened())
-    {
-        mZed.close();
-    }
+    sl::Mat frame = mGrabber.getLastImage();
 
-    sl::InitParameters initParams;
-    initParams.camera_fps = 15;
-    initParams.camera_resolution = sl::RESOLUTION::VGA;
+    ui->openGLWidget_img->updateZedImage(frame);
 
-    sl::ERROR_CODE res = mZed.open( initParams );
+    //qDebug() << tr("New Image");
+}
 
-    if( sl::ERROR_CODE::SUCCESS != res)
-    {
-        return false;
-    }
+void MainWindow::onNewZedObjList()
+{
+    sl::Objects obj = mGrabber.getLastObjDet();
 
-    if( mZed.getCameraInformation().camera_model != sl::MODEL::ZED2)
-    {
-        return false;
-    }
-
-    mZedW = mZed.getCameraInformation().camera_configuration.resolution.width;
-    mZedH = mZed.getCameraInformation().camera_configuration.resolution.height;
-
-    return true;
+    //qDebug() << tr("New Object List");
 }
