@@ -19,7 +19,8 @@ protected:
 
 private:
     QImage mRenderImage;
-    bool mNewObjects = false;
+
+    sl::Objects mZedObjects;
 };
 
 #endif // OGLRENDERER_H

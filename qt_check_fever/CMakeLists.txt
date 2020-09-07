@@ -21,6 +21,7 @@ find_package(CUDA ${ZED_CUDA_VERSION} EXACT REQUIRED)
 SET(ZED_LIBS ${ZED_LIBRARIES} ${CUDA_CUDA_LIBRARY} ${CUDA_CUDART_LIBRARY})
 SET(SPECIAL_OS_LIBS "pthread" "X11")
 add_definitions(-Wno-write-strings)
+set(OGL_LIBS GL GLU)
 
 ############################################################
 # Includes
@@ -74,6 +75,7 @@ target_link_libraries(qt_check_fever LINK_PUBLIC
     lepton3_grabber
     ${ZED_LIBS}
     ${SPECIAL_OS_LIBS}
+    ${OGL_LIBS}
 )
 
 qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})

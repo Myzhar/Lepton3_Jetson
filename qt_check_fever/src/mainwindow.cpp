@@ -51,6 +51,7 @@ void MainWindow::onNewZedImage()
 void MainWindow::onNewZedObjList()
 {
     sl::Objects obj = mGrabber.getLastObjDet();
+    ui->openGLWidget_img->updateZedObjects(obj);
 
     //qDebug() << tr("New Object List");
 }

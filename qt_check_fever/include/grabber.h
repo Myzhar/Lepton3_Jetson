@@ -30,7 +30,7 @@ signals:
 private:
     sl::Camera mZed;
     sl::RESOLUTION mZedResol = sl::RESOLUTION::VGA;
-    int mZedFramerate = 15;
+    int mZedFramerate = 30;
     uint16_t mZedW=0;
     uint16_t mZedH=0;
 
