@@ -34,6 +34,10 @@ $ make
 $ cd ..
 ```
 
+### Install latest CMake
+
+https://askubuntu.com/questions/355565/how-do-i-install-the-latest-version-of-cmake-from-the-command-line
+
 ## Camera connection
 
 <img src="images/Connections.png" width="250" height="250">
