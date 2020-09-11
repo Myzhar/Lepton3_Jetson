@@ -10,7 +10,10 @@ Grabber::~Grabber()
 {
     mStopRequest = true;
 
-    while( !mGrabThread->isFinished() );
+    if( mGrabThread.joinable() )
+    {
+        mGrabThread.join();
+    }
 }
 
 bool Grabber::openZed()
@@ -23,6 +26,7 @@ bool Grabber::openZed()
     sl::InitParameters initParams;
     initParams.camera_fps = mZedFramerate;
     initParams.camera_resolution = mZedResol;
+    initParams.coordinate_units = sl::UNIT::METER;
 
     sl::ERROR_CODE res = mZed.open( initParams );
 
@@ -44,9 +48,7 @@ bool Grabber::openZed()
 
 void Grabber::startCapture()
 {
-    mGrabThread = QThread::create( &Grabber::grabFunc, this );
-
-    mGrabThread->start();
+    mGrabThread = std::thread( &Grabber::grabFunc, this );
 }
 
 sl::Mat& Grabber::getLastImage()
@@ -108,16 +110,16 @@ void Grabber::grabFunc()
 
         if(err != sl::ERROR_CODE::SUCCESS)
         {
-            QThread::msleep( mZedFramerate/2 );
+            std::this_thread::sleep_for(std::chrono::milliseconds(500/mZedFramerate));
         }
 
         {
-            QMutexLocker imgLocker(&mImgMutex);
+            const std::lock_guard<std::mutex> lock(mImgMutex);
             err = mZed.retrieveImage(mZedRgb, sl::VIEW::LEFT );
             if(err != sl::ERROR_CODE::SUCCESS)
             {
                 qDebug() << tr("Error Retrieving Image: %1").arg(sl::toString(err).c_str());
-                QThread::msleep( mZedFramerate/2 );
+                std::this_thread::sleep_for(std::chrono::milliseconds(500/mZedFramerate));
                 continue;
             }
             emit zedImageReady();
@@ -127,17 +129,17 @@ void Grabber::grabFunc()
         if(err != sl::ERROR_CODE::SUCCESS)
         {
             qDebug() << tr("Error Retrieving Depth: %1").arg(sl::toString(err).c_str());
-            QThread::msleep( mZedFramerate/2 );
+            std::this_thread::sleep_for(std::chrono::milliseconds(500/mZedFramerate));
             continue;
         }
 
         {
-            QMutexLocker objLocker( &mObjMutex );
+            const std::lock_guard<std::mutex> lock(mObjMutex);
             err = mZed.retrieveObjects(mZedObj, mObjRtParams );
             if(err != sl::ERROR_CODE::SUCCESS)
             {
                 qDebug() << tr("Error Retrieving Objects: %1").arg(sl::toString(err).c_str());
-                QThread::msleep( mZedFramerate/2 );
+                std::this_thread::sleep_for(std::chrono::milliseconds(500/mZedFramerate));
                 continue;
             }
 

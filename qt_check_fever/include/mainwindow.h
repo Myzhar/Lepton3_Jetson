@@ -3,8 +3,11 @@
 
 #include <QMainWindow>
 #include <QThread>
+#include <QSettings>
 
 #include "grabber.h"
+
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -18,14 +21,32 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+protected:
+    void saveSettings();
+    void restoreSettings();
+    virtual void closeEvent(QCloseEvent *event);
+
 protected slots:
     void onNewZedImage();
     void onNewZedObjList();
+    void onPersonDist(qreal dist,qreal temp);
+
+private slots:
+    void on_horizontalSlider_h_offset_valueChanged(int value);
+    void on_horizontalSlider_v_offset_valueChanged(int value);
+    void on_horizontalSlider_scale_factor_valueChanged(int value);
+
+    void on_pushButton_reset_overlay_clicked();
 
 private:
     Ui::MainWindow *ui;
 
     Grabber mGrabber;
+
+    qint8 mOvHorOffset=0;
+    qint8 mOvVerOffset=0;
+    qreal mOvScale=1.0;
+
 
 };
 #endif // MAINWINDOW_H

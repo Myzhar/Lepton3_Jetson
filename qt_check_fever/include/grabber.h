@@ -2,8 +2,8 @@
 #define GRABBER_H
 
 #include <QObject>
-#include <QThread>
-#include <QMutex>
+#include <thread>
+#include <mutex>
 
 #include <sl/Camera.hpp>
 
@@ -40,9 +40,9 @@ private:
 
     sl::ObjectDetectionRuntimeParameters mObjRtParams;
 
-    QThread* mGrabThread;
-    QMutex mImgMutex;
-    QMutex mObjMutex;
+    std::thread mGrabThread;
+    std::mutex mImgMutex;
+    std::mutex mObjMutex;
 
     bool mStopRequest = false;
 };
