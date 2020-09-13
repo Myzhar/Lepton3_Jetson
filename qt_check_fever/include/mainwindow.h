@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QThread>
 #include <QSettings>
+#include <QLabel>
 
 #include "grabber.h"
 
@@ -30,6 +31,7 @@ protected slots:
     void onNewZedImage();
     void onNewZedObjList();
     void onPersonDist(qreal dist,qreal temp);
+    void onStatusMessage(QString message);
 
 private slots:
     void on_horizontalSlider_h_offset_valueChanged(int value);
@@ -47,6 +49,7 @@ private:
     qint8 mOvVerOffset=0;
     qreal mOvScale=1.0;
 
+    QLabel mStatusLabel;
 
 };
 #endif // MAINWINDOW_H

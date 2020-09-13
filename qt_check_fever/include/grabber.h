@@ -26,6 +26,7 @@ protected:
 signals:
     void zedImageReady();
     void zedObjListReady();
+    void statusMessage(QString msg);
 
 private:
     sl::Camera mZed;

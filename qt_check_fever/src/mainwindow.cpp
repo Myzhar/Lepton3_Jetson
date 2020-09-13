@@ -17,6 +17,13 @@ MainWindow::MainWindow(QWidget *parent)
     ui->horizontalSlider_v_offset->setValue(mOvVerOffset);
     ui->horizontalSlider_scale_factor->setValue(mOvScale*100);
     ui->openGLWidget_img->setOverlayOffsetScale(mOvHorOffset,mOvVerOffset,mOvScale);
+    ui->openGLWidget_thermal->setOnlyFlir();
+
+    ui->statusbar->addWidget(&mStatusLabel);
+
+    connect( &mGrabber, &Grabber::statusMessage, this, &MainWindow::onStatusMessage );
+    connect( &mGrabber, &Grabber::zedImageReady, this, &MainWindow::onNewZedImage );
+    connect( &mGrabber, &Grabber::zedObjListReady, this, &MainWindow::onNewZedObjList );
 
     bool zed_ok=false;
 
@@ -27,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent)
         if(!zed_ok)
         {
             if( QMessageBox::StandardButton::Abort == QMessageBox::critical(this, tr("Error"), tr("Please connect a ZED2 Camera"),
-                                  QMessageBox::StandardButton::Abort|QMessageBox::StandardButton::Ok) )
+                                                                            QMessageBox::StandardButton::Abort|QMessageBox::StandardButton::Ok) )
             {
                 exit(EXIT_FAILURE);
             }
@@ -36,8 +43,7 @@ MainWindow::MainWindow(QWidget *parent)
         }
     } while(!zed_ok);
 
-    connect( &mGrabber, &Grabber::zedImageReady, this, &MainWindow::onNewZedImage );
-    connect( &mGrabber, &Grabber::zedObjListReady, this, &MainWindow::onNewZedObjList );
+
     connect( ui->openGLWidget_img, &OglRenderer::nearestPerson, this, &MainWindow::onPersonDist );
 
     mGrabber.startCapture();
@@ -48,11 +54,28 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::onStatusMessage(QString message)
+{
+    mStatusLabel.setText(message);
+}
+
 void MainWindow::onNewZedImage()
 {
+    QImage dummyFlir(QSize(160,120), QImage::Format_Grayscale16);
+    dummyFlir.fill(QColor(0,0,0,150));
+    static quint8 r = 0;
+    static quint8 c = 0;
+
+    dummyFlir.setPixel((c++)%160,(r++)%120, qRgb(255,255,255));
+    dummyFlir.setPixel(159-(c++)%160,119-(r++)%120, qRgb(255,255,255));
+    dummyFlir.setPixel(159-(c++)%160,(r++)%120, qRgb(255,255,255));
+    dummyFlir.setPixel((c++)%160,119-(r++)%120, qRgb(255,255,255));
+    ui->openGLWidget_thermal->updateFlirImage(dummyFlir);
+
     sl::Mat frame = mGrabber.getLastImage();
 
     ui->openGLWidget_img->updateZedImage(frame);
+    ui->openGLWidget_img->updateFlirImage(dummyFlir);
 
     //qDebug() << tr("New Image");
 }

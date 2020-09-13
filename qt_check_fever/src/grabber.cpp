@@ -18,6 +18,8 @@ Grabber::~Grabber()
 
 bool Grabber::openZed()
 {
+    emit statusMessage(tr("Opening ZED2"));
+
     if(mZed.isOpened())
     {
         mZed.close();
@@ -35,6 +37,8 @@ bool Grabber::openZed()
         return false;
     }
 
+    emit statusMessage(tr("ZED2 ready"));
+
     if( mZed.getCameraInformation().camera_model != sl::MODEL::ZED2)
     {
         return false;
@@ -48,6 +52,7 @@ bool Grabber::openZed()
 
 void Grabber::startCapture()
 {
+    emit statusMessage(tr("Starting capture"));
     mGrabThread = std::thread( &Grabber::grabFunc, this );
 }
 
@@ -74,6 +79,8 @@ void Grabber::grabFunc()
 
     mObjRtParams.detection_confidence_threshold = 50.f;
 
+    emit statusMessage(tr("Starting ZED2 tracking module..."));
+
     // ----> Positional tracking required by Object Detection module
     sl::PositionalTrackingParameters posTrackParams;
     posTrackParams.set_as_static=true;
@@ -84,6 +91,10 @@ void Grabber::grabFunc()
         return;
     }
     // <---- Positional tracking required by Object Detection module
+
+    emit statusMessage(tr("Starting ZED2 AI module..."));
+
+    //std::this_thread::sleep_for(std::chrono::milliseconds(5000));
 
     // ----> Object Detection to detect Skeletons
     sl::ObjectDetectionParameters objDetPar;
@@ -98,6 +109,8 @@ void Grabber::grabFunc()
         return;
     }
     // <---- Object Detection to detect Skeletons
+
+    emit statusMessage(tr("Stereolabs ZED2 ready"));
 
     forever
     {

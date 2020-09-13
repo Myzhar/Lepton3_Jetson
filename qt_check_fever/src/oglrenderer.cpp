@@ -17,6 +17,16 @@ void OglRenderer::updateZedImage(sl::Mat& image)
     this->update();
 }
 
+void OglRenderer::updateFlirImage(QImage &flir)
+{
+    mFlirImg = flir;
+
+    if(mOnlyFlir)
+    {
+        this->update();
+    }
+}
+
 void OglRenderer::updateZedObjects(sl::Objects &objects)
 {
     mZedObjects = objects;
@@ -26,6 +36,10 @@ void OglRenderer::setOverlayOffsetScale(qint8 hOffset, qint8 vOffset, qreal scal
 {
     mOvHorOffset = hOffset;
     mOvVerOffset = vOffset;
+    if(mOvScale!=scale)
+    {
+        mAlphaChValid = false;
+    }
     mOvScale = scale;
 }
 
@@ -34,24 +48,54 @@ void OglRenderer::paintEvent(QPaintEvent*)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
+    if(mOnlyFlir)
+    {
+        int xOffset = (this->width() - mFlirImg.width())/2;
+        int yOffset = (this->height() - mFlirImg.height())/2;
+
+        painter.drawImage(QRect(xOffset,yOffset,mFlirImg.width(),mFlirImg.height()), mFlirImg);
+        return;
+    }
+
     int xOffset = (this->width() - mRenderImage.width())/2;
     int yOffset = (this->height() - mRenderImage.height())/2;
 
     painter.drawImage(QRect(xOffset,yOffset,mRenderImage.width(),mRenderImage.height()), mRenderImage);
+
+
+    QImage flirScaled;
+    int xOffset_flir=0;
+    int yOffset_flir=0;
+    if(!mFlirImg.isNull())
+    {
+        flirScaled = mFlirImg.scaledToHeight( mOvScale*mRenderImage.height() );
+        flirScaled = flirScaled.convertToFormat( QImage::Format_ARGB32 );
+
+        xOffset_flir = mOvHorOffset + xOffset + (mRenderImage.width() - flirScaled.width())/2;
+        yOffset_flir = mOvVerOffset + yOffset + (mRenderImage.height() - flirScaled.height())/2;
+
+        if(mAlphaCh.isNull() || !mAlphaChValid)
+        {
+            mAlphaCh = QImage(flirScaled.size(), QImage::Format_Alpha8 );
+            mAlphaChValid=true;
+        }
+
+        mAlphaCh.fill(QColor(0,0,0,0));
+    }
 
     qreal min_dist=100.0;
     qreal temperature=-273.15;
 
     if(mZedObjects.object_list.size() > 0)
     {
-        int penSize = 3;
+        int penSize = 5;
         foreach (sl::ObjectData obj, mZedObjects.object_list)
         {
             painter.setBrush( Qt::NoBrush);
             QPen pen;
-            quint8 r = (obj.id+60)*45235235;
-            quint8 g = (obj.id+30)*34653524;
-            quint8 b = (obj.id+90)*23451366;
+            quint8 r = (obj.id+1)*452335;
+            quint8 g = (obj.id+1)*4653523;
+            quint8 b = (obj.id+1)*2351366;
             pen.setColor( QColor(r,g,b,175) );
             pen.setWidth(penSize);
             pen.setCapStyle(Qt::RoundCap);
@@ -66,6 +110,15 @@ void OglRenderer::paintEvent(QPaintEvent*)
             rect.setTopLeft( QPoint(rect_left,rect_top));
             rect.setBottomRight( QPoint(rect_right,rect_bottom));
             painter.drawRoundedRect(rect,3*penSize,3*penSize);
+
+            if(!mAlphaCh.isNull() && mAlphaChValid)
+            {
+                QPainter p(&mAlphaCh);
+                p.setPen(Qt::NoPen);
+                p.setBrush(QBrush(QColor(mAlphaVal,mAlphaVal,mAlphaVal,mAlphaVal)));
+                rect.moveCenter(QPoint(rect.center().x()-xOffset_flir,rect.center().y()-yOffset_flir));
+                p.drawRoundedRect(rect,3*penSize,3*penSize);
+            }
 
             pen.setWidth(2*penSize);
             painter.setPen(pen);
@@ -124,5 +177,18 @@ void OglRenderer::paintEvent(QPaintEvent*)
         }
     }
 
+    if(!mFlirImg.isNull())
+    {
+        if(!mAlphaCh.isNull() && mAlphaChValid)
+        {
+            flirScaled.setAlphaChannel(mAlphaCh);
+        }
+
+        painter.setCompositionMode(QPainter::CompositionMode_SourceOver);
+        painter.drawImage(QRect(xOffset_flir,yOffset_flir,flirScaled.width(),flirScaled.height()), flirScaled);
+    }
+
     emit nearestPerson(min_dist,temperature);
+
+
 }

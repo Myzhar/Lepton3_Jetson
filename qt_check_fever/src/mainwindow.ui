@@ -132,6 +132,29 @@
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>Raw Thermal Image</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="OglRenderer" name="openGLWidget_thermal">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>160</width>
+         <height>120</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="verticalSpacer">
        <property name="orientation">
         <enum>Qt::Vertical</enum>
@@ -155,7 +178,7 @@
       <widget class="QSlider" name="horizontalSlider_h_offset">
        <property name="minimumSize">
         <size>
-         <width>150</width>
+         <width>160</width>
          <height>0</height>
         </size>
        </property>
@@ -181,7 +204,7 @@
       <widget class="QSlider" name="horizontalSlider_v_offset">
        <property name="minimumSize">
         <size>
-         <width>150</width>
+         <width>160</width>
          <height>0</height>
         </size>
        </property>
@@ -207,7 +230,7 @@
       <widget class="QSlider" name="horizontalSlider_scale_factor">
        <property name="minimumSize">
         <size>
-         <width>150</width>
+         <width>160</width>
          <height>0</height>
         </size>
        </property>
