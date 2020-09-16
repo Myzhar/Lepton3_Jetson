@@ -5,6 +5,7 @@
 #include <QImage>
 
 #include <sl/Camera.hpp>
+#include <opencv2/opencv.hpp>
 
 class OglRenderer : public QOpenGLWidget
 {
@@ -17,7 +18,7 @@ public:
 
     void updateZedImage(sl::Mat &image);
     void updateZedObjects(sl::Objects &objects);
-    void updateFlirImage(QImage& flir);
+    void updateFlirImage(cv::Mat &image);
 
     void setOverlayOffsetScale( qint8 hOffset, qint8 vOffset, qreal scale );
 

@@ -1,96 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="qt_check_fever_en_US">
+<TS version="2.1" language="en_US">
 <context>
-    <name>Grabber</name>
+    <name>LeptonGrabber</name>
     <message>
-        <location filename="../src/grabber.cpp" line="21"/>
-        <source>Opening ZED2</source>
+        <location filename="../src/leptongrabber.cpp" line="22"/>
+        <source>Opening FLIR Lepton</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/grabber.cpp" line="40"/>
-        <source>ZED2 ready</source>
+        <location filename="../src/leptongrabber.cpp" line="31"/>
+        <source>Error disabling FLIR RGB mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/grabber.cpp" line="55"/>
-        <source>Starting capture</source>
+        <location filename="../src/leptongrabber.cpp" line="49"/>
+        <source>Error setting FLIR gain mode</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/grabber.cpp" line="71"/>
-        <source>Grabber thread started</source>
+        <location filename="../src/leptongrabber.cpp" line="57"/>
+        <source>Error enabling FLIR radiometry</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/grabber.cpp" line="82"/>
-        <source>Starting ZED2 tracking module...</source>
+        <location filename="../src/leptongrabber.cpp" line="67"/>
+        <source>Starting FLIR capture</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/grabber.cpp" line="90"/>
-        <source>Error starting Positional Tracking: %1</source>
+        <location filename="../src/leptongrabber.cpp" line="78"/>
+        <source>Lepton Grabber thread started</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/grabber.cpp" line="95"/>
-        <source>Starting ZED2 AI module...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/grabber.cpp" line="108"/>
-        <source>Error starting Object Detectiom: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/grabber.cpp" line="113"/>
-        <source>Stereolabs ZED2 ready</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/grabber.cpp" line="134"/>
-        <source>Error Retrieving Image: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/grabber.cpp" line="144"/>
-        <source>Error Retrieving Depth: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/grabber.cpp" line="154"/>
-        <source>Error Retrieving Objects: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/grabber.cpp" line="167"/>
-        <source>Grabber thread finished</source>
+        <location filename="../src/leptongrabber.cpp" line="143"/>
+        <source>Lepton Grabber thread finished</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>MainWindow</name>
-    <message>
-        <location filename="../src/mainwindow.cpp" line="36"/>
-        <source>Error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cpp" line="36"/>
-        <source>Please connect a ZED2 Camera</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cpp" line="95"/>
-        <source>%1 m</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.cpp" line="96"/>
-        <source>%1°C</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <location filename="../src/mainwindow.ui" line="14"/>
         <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="250"/>
@@ -187,12 +137,106 @@
         <source>Overlay Calibration</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="40"/>
+        <location filename="../src/mainwindow.cpp" line="53"/>
+        <source>Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="40"/>
+        <source>Please connect a ZED2 Camera</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="53"/>
+        <source>FLIR Lepton module not responding</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="120"/>
+        <source>%1 m</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="121"/>
+        <source>%1°C</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>OglRenderer</name>
     <message>
-        <location filename="../src/oglrenderer.cpp" line="167"/>
+        <location filename="../src/oglrenderer.cpp" line="171"/>
         <source>%1 m</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ZedGrabber</name>
+    <message>
+        <location filename="../src/zedgrabber.cpp" line="21"/>
+        <source>Opening ZED2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/zedgrabber.cpp" line="40"/>
+        <source>ZED2 ready</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/zedgrabber.cpp" line="55"/>
+        <source>Starting ZED capture</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/zedgrabber.cpp" line="71"/>
+        <source>Grabber thread started</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/zedgrabber.cpp" line="82"/>
+        <source>Starting ZED2 tracking module...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/zedgrabber.cpp" line="90"/>
+        <source>Error starting Positional Tracking: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/zedgrabber.cpp" line="95"/>
+        <source>Starting ZED2 AI module...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/zedgrabber.cpp" line="108"/>
+        <source>Error starting Object Detectiom: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/zedgrabber.cpp" line="113"/>
+        <source>Stereolabs ZED2 ready</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/zedgrabber.cpp" line="134"/>
+        <source>Error Retrieving Image: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/zedgrabber.cpp" line="144"/>
+        <source>Error Retrieving Depth: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/zedgrabber.cpp" line="154"/>
+        <source>Error Retrieving Objects: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/zedgrabber.cpp" line="167"/>
+        <source>Grabber thread finished</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

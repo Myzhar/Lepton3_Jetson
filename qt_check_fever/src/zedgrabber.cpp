@@ -1,12 +1,12 @@
-#include "grabber.h"
+#include "zedgrabber.h"
 #include <QDebug>
 
-Grabber::Grabber(QObject *parent) : QObject(parent)
+ZedGrabber::ZedGrabber(QObject *parent) : QObject(parent)
 {
 
 }
 
-Grabber::~Grabber()
+ZedGrabber::~ZedGrabber()
 {
     mStopRequest = true;
 
@@ -16,7 +16,7 @@ Grabber::~Grabber()
     }
 }
 
-bool Grabber::openZed()
+bool ZedGrabber::openZed()
 {
     emit statusMessage(tr("Opening ZED2"));
 
@@ -50,23 +50,23 @@ bool Grabber::openZed()
     return true;
 }
 
-void Grabber::startCapture()
+void ZedGrabber::startCapture()
 {
-    emit statusMessage(tr("Starting capture"));
-    mGrabThread = std::thread( &Grabber::grabFunc, this );
+    emit statusMessage(tr("Starting ZED capture"));
+    mGrabThread = std::thread( &ZedGrabber::grabFunc, this );
 }
 
-sl::Mat& Grabber::getLastImage()
+sl::Mat& ZedGrabber::getLastImage()
 {
     return mZedRgb;
 }
 
-sl::Objects& Grabber::getLastObjDet()
+sl::Objects& ZedGrabber::getLastObjDet()
 {
     return mZedObj;
 }
 
-void Grabber::grabFunc()
+void ZedGrabber::grabFunc()
 {
     qDebug() << tr("Grabber thread started");
 

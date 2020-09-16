@@ -77,7 +77,7 @@ cv::Mat& analizeFrame(const  cv::Mat& frame16);
 
 int main (int argc, char *argv[])
 {
-    cout << "Check Fever App for Lepton3 on Nvidia Jetson" << endl;
+    cout << "Check Fever App for Lepton3 on Nvidia Jetson" << std::endl;
 
     // ----> Set Ctrl+C handler
     struct sigaction sigIntHandler;
@@ -112,7 +112,7 @@ int main (int argc, char *argv[])
         if( lepton3->getGainMode( gainMode ) == LEP_OK )
         {
             string str = (gainMode==LEP_SYS_GAIN_MODE_HIGH)?string("High"):((gainMode==LEP_SYS_GAIN_MODE_LOW)?string("Low"):string("Auto"));
-            cout << " * Gain mode: " << str << endl;
+            cout << " * Gain mode: " << str << std::endl;
         }
     }
     // <---- High gain mode [0,150] Celsius
@@ -120,7 +120,7 @@ int main (int argc, char *argv[])
     // ----> Enable Radiometry to get values indipendent from camera temperature
     if( lepton3->enableRadiometry( true ) != LEP_OK)
     {
-        cerr << "Failed to enable radiometry!" << endl;
+        cerr << "Failed to enable radiometry!" << std::endl;
         return EXIT_FAILURE;
     }
     // <---- Enable Radiometry to get values indipendent from camera temperature
@@ -331,7 +331,7 @@ int main (int argc, char *argv[])
 
             if( deb_lvl>=Lepton3::DBG_INFO  )
             {
-                cout << "> Frame period: " << period_usec <<  " usec - FPS: " << freq << endl;
+                cout << "> Frame period: " << period_usec <<  " usec - FPS: " << freq << std::endl;
             }
         }
 
@@ -355,7 +355,7 @@ int main (int argc, char *argv[])
         {
             if( lepton3->doFFC() == LEP_OK )
             {
-                cout << " * FFC completed" << endl;
+                cout << " * FFC completed" << std::endl;
             }
 
             doFFC = false;
@@ -371,7 +371,7 @@ void close_handler(int s)
 {
     if(s==2)
     {
-        cout << endl << "Ctrl+C pressed..." << endl;
+        cout << std::endl << "Ctrl+C pressed..." << std::endl;
         close = true;
     }
 }
@@ -383,14 +383,14 @@ void keyboard_handler(int key)
     case 'f':
         if( lepton3->doFFC() == LEP_OK )
         {
-            cout << " * FFC completed" << endl;
+            cout << " * FFC completed" << std::endl;
         }
         break;
 
     case 'F':
         if( lepton3->doRadFFC() == LEP_OK )
         {
-            cout << " * Radiometry FFC completed" << endl;
+            cout << " * Radiometry FFC completed" << std::endl;
         }
         break;
 
@@ -421,17 +421,17 @@ void set_rgb_mode(bool enable)
 
     if( lepton3->enableRadiometry( !rgb_mode ) < 0)
     {
-        cerr << "Failed to set radiometry status" << endl;
+        cerr << "Failed to set radiometry status" << std::endl;
     }
     else
     {
         if(!rgb_mode)
         {
-            cout << " * Radiometry enabled " << endl;
+            cout << " * Radiometry enabled " << std::endl;
         }
         else
         {
-            cout << " * Radiometry disabled " << endl;
+            cout << " * Radiometry disabled " << std::endl;
         }
     }
 
@@ -440,33 +440,33 @@ void set_rgb_mode(bool enable)
 
     if( lepton3->enableAgc( rgb_mode ) < 0)
     {
-        cerr << "Failed to set radiometry status" << endl;
+        cerr << "Failed to set radiometry status" << std::endl;
     }
     else
     {
         if(!rgb_mode)
         {
-            cout << " * AGC disabled " << endl;
+            cout << " * AGC disabled " << std::endl;
         }
         else
         {
-            cout << " * AGC enabled " << endl;
+            cout << " * AGC enabled " << std::endl;
         }
     }
 
     if( lepton3->enableRgbOutput( rgb_mode ) < 0 )
     {
-        cerr << "Failed to enable RGB output" << endl;
+        cerr << "Failed to enable RGB output" << std::endl;
     }
     else
     {
         if(rgb_mode)
         {
-            cout << " * RGB enabled " << endl;
+            cout << " * RGB enabled " << std::endl;
         }
         else
         {
-            cout << " * RGB disabled " << endl;
+            cout << " * RGB disabled " << std::endl;
         }
     }
 }

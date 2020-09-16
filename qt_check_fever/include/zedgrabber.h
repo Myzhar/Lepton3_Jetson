@@ -1,5 +1,5 @@
-#ifndef GRABBER_H
-#define GRABBER_H
+#ifndef ZEDGRABBER_H
+#define ZEDGRABBER_H
 
 #include <QObject>
 #include <thread>
@@ -7,12 +7,12 @@
 
 #include <sl/Camera.hpp>
 
-class Grabber : public QObject
+class ZedGrabber : public QObject
 {
     Q_OBJECT
 public:
-    explicit Grabber(QObject *parent = nullptr);
-    virtual ~Grabber();
+    explicit ZedGrabber(QObject *parent = nullptr);
+    virtual ~ZedGrabber();
 
     bool openZed();
     void startCapture();
@@ -48,4 +48,4 @@ private:
     bool mStopRequest = false;
 };
 
-#endif // GRABBER_H
+#endif // ZEDGRABBER_H

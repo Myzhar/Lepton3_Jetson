@@ -32,7 +32,7 @@ void set_rgb_mode(bool enable);
 
 int main (int argc, char *argv[])
 {
-    cout << "OpenCV demo for Lepton3 on Nvidia Jetson" << endl;
+    cout << "OpenCV demo for Lepton3 on Nvidia Jetson" << std::endl;
 
     // ----> Set Ctrl+C handler
     struct sigaction sigIntHandler;
@@ -85,7 +85,7 @@ int main (int argc, char *argv[])
             {
                 memcpy( frame16.data, data16, w*h*sizeof(uint16_t) );
 
-                //cout << " * Central value: " << (int)(frame16.at<uint16_t>(w/2 + h/2*w )) << endl;
+                //cout << " * Central value: " << (int)(frame16.at<uint16_t>(w/2 + h/2*w )) << std::endl;
 
                 // ----> Rescaling/Normalization to 8bit
                 double diff = static_cast<double>(max - min); // Image range
@@ -113,7 +113,7 @@ int main (int argc, char *argv[])
 
             if( deb_lvl>=Lepton3::DBG_INFO  )
             {
-                cout << "> Frame period: " << period_usec <<  " usec - FPS: " << freq << endl;
+                cout << "> Frame period: " << period_usec <<  " usec - FPS: " << freq << std::endl;
             }
         }
 
@@ -129,7 +129,7 @@ void close_handler(int s)
 {
     if(s==2)
     {
-        cout << endl << "Ctrl+C pressed..." << endl;
+        cout << std::endl << "Ctrl+C pressed..." << std::endl;
         close = true;
     }
 }
@@ -155,7 +155,7 @@ void keyboard_handler(int key)
             if( lepton3->getGainMode( gainMode ) == LEP_OK )
             {
                 string str = (gainMode==LEP_SYS_GAIN_MODE_HIGH)?string("High"):((gainMode==LEP_SYS_GAIN_MODE_LOW)?string("Low"):string("Auto"));
-                cout << " * Gain mode: " << str << endl;
+                cout << " * Gain mode: " << str << std::endl;
             }
         }
         break;
@@ -168,7 +168,7 @@ void keyboard_handler(int key)
             if( lepton3->getGainMode( gainMode ) == LEP_OK )
             {
                 string str = (gainMode==LEP_SYS_GAIN_MODE_HIGH)?string("High"):((gainMode==LEP_SYS_GAIN_MODE_LOW)?string("Low"):string("Auto"));
-                cout << " * Gain mode: " << str << endl;
+                cout << " * Gain mode: " << str << std::endl;
             }
         }
         break;
@@ -181,7 +181,7 @@ void keyboard_handler(int key)
             if( lepton3->getGainMode( gainMode ) == LEP_OK )
             {
                 string str = (gainMode==LEP_SYS_GAIN_MODE_HIGH)?string("High"):((gainMode==LEP_SYS_GAIN_MODE_LOW)?string("Low"):string("Auto"));
-                cout << " * Gain mode: " << str << endl;
+                cout << " * Gain mode: " << str << std::endl;
             }
         }
         break;
@@ -189,14 +189,14 @@ void keyboard_handler(int key)
     case 'f':
         if( lepton3->doFFC() == LEP_OK )
         {
-            cout << " * FFC completed" << endl;
+            cout << " * FFC completed" << std::endl;
         }
         break;
 
     case 'F':
         if( lepton3->doRadFFC() == LEP_OK )
         {
-            cout << " * Radiometry FFC completed" << endl;
+            cout << " * Radiometry FFC completed" << std::endl;
         }
         break;
 
@@ -211,17 +211,17 @@ void set_rgb_mode(bool enable)
 
     if( lepton3->enableRadiometry( !rgb_mode ) < 0)
     {
-        cerr << "Failed to set radiometry status" << endl;
+        cerr << "Failed to set radiometry status" << std::endl;
     }
     else
     {
         if(!rgb_mode)
         {
-            cout << " * Radiometry enabled " << endl;
+            cout << " * Radiometry enabled " << std::endl;
         }
         else
         {
-            cout << " * Radiometry disabled " << endl;
+            cout << " * Radiometry disabled " << std::endl;
         }
     }
 
@@ -230,33 +230,33 @@ void set_rgb_mode(bool enable)
 
     if( lepton3->enableAgc( rgb_mode ) < 0)
     {
-        cerr << "Failed to set radiometry status" << endl;
+        cerr << "Failed to set radiometry status" << std::endl;
     }
     else
     {
         if(!rgb_mode)
         {
-            cout << " * AGC disabled " << endl;
+            cout << " * AGC disabled " << std::endl;
         }
         else
         {
-            cout << " * AGC enabled " << endl;
+            cout << " * AGC enabled " << std::endl;
         }
     }
 
     if( lepton3->enableRgbOutput( rgb_mode ) < 0 )
     {
-        cerr << "Failed to enable RGB output" << endl;
+        cerr << "Failed to enable RGB output" << std::endl;
     }
     else
     {
         if(rgb_mode)
         {
-            cout << " * RGB enabled " << endl;
+            cout << " * RGB enabled " << std::endl;
         }
         else
         {
-            cout << " * RGB disabled " << endl;
+            cout << " * RGB disabled " << std::endl;
         }
     }
 }

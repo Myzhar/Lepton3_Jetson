@@ -48,7 +48,7 @@ Lepton3::Lepton3(std::string spiDevice, std::string i2c_port, DebugLvl dbgLvl )
     mSpiMode = SPI_MODE_1;
     // CPHA=1 (SDO transmit/change edge idle to active)
     mSpiBits = 8;
-    mSpiSpeed = 20000000; // 20Mhz max speed according to Lepton3 datasheet
+    mSpiSpeed = 16000000; // 20Mhz max speed according to Lepton3 datasheet
 
     mSpiTR.tx_buf = (unsigned long)NULL;
     mSpiTR.delay_usecs = 50;
@@ -398,7 +398,7 @@ void Lepton3::thread_func()
 
         if( mDebugLvl>=DBG_FULL )
         {
-            cout << endl << "Thread period: " << threadPeriod << " usec - VoSPI Available: "
+            cout << std::endl << "Thread period: " << threadPeriod << " usec - VoSPI Available: "
                  << usecAvail << " usec" << "\r\n";
         }
 
@@ -463,7 +463,7 @@ void Lepton3::thread_func()
 
                     if( mDebugLvl>=DBG_FULL )
                     {
-                        cout << endl
+                        cout << std::endl
                              << "************************ FRAME COMPLETE " \
                                 "************************" << "\r\n";
                     }
@@ -569,7 +569,7 @@ void Lepton3::resync()
 
     //if( mDebugLvl>=DBG_INFO )
     {
-        cout << endl << "*** Forcing RESYNC *** [" << mResyncCount << " - " << mTotResyncCount << "]" << "\r\n";
+        cout << std::endl << "*** Forcing RESYNC *** [" << mResyncCount << " - " << mTotResyncCount << "]" << "\r\n";
     }
 
     // >>>>> Resync
@@ -1296,7 +1296,7 @@ void Lepton3::raw2data16()
     
     if( mDebugLvl>=DBG_INFO )
     {
-        cout << endl << "Min: " << mMin << " - Max: " << mMax << "\r\n";
+        cout << std::endl << "Min: " << mMin << " - Max: " << mMax << "\r\n";
         cout << "---------------------------------------------------" << "\r\n";
     }
     

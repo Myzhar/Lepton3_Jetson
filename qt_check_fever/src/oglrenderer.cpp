@@ -17,9 +17,12 @@ void OglRenderer::updateZedImage(sl::Mat& image)
     this->update();
 }
 
-void OglRenderer::updateFlirImage(QImage &flir)
+void OglRenderer::updateFlirImage(cv::Mat& image)
 {
-    mFlirImg = flir;
+    cv::Mat rgb;
+
+    mFlirImg = QImage(rgb.data, image.cols, image.rows,
+                      QImage::Format_RGB888);
 
     if(mOnlyFlir)
     {

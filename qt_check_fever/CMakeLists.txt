@@ -11,12 +11,27 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17) # Required to use QThread::create with args
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+if(CMAKE_BUILD_TYPE MATCHES Release )
+    #message(" * Release Mode")
+    add_compile_options(-Wno-deprecated-declarations)
+endif()
+
+if(CMAKE_BUILD_TYPE MATCHES RelWithDebInfo )
+    #message(" * Release with Debug Info Mode")
+    add_compile_options(-Wno-deprecated-declarations)
+endif()
+
+if(CMAKE_BUILD_TYPE MATCHES Debug )
+    message(" * Debug Mode")
+endif()
+
 ############################################################
 # Dependencies
 find_package(Qt5 COMPONENTS Widgets LinguistTools REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(ZED 3 REQUIRED)
 find_package(CUDA ${ZED_CUDA_VERSION} EXACT REQUIRED)
+find_package(OpenCV REQUIRED)
 
 SET(ZED_LIBS ${ZED_LIBRARIES} ${CUDA_CUDA_LIBRARY} ${CUDA_CUDART_LIBRARY})
 SET(SPECIAL_OS_LIBS "pthread" "X11")
@@ -42,13 +57,15 @@ set(TS_FILES
 set(SRC
     src/main.cpp
     src/mainwindow.cpp
-    src/grabber.cpp
+    src/zedgrabber.cpp
+    src/leptongrabber.cpp
     src/oglrenderer.cpp
 )
 
 set(INC
     include/mainwindow.h
-    include/grabber.h
+    include/zedgrabber.h
+    include/leptongrabber.h
     include/oglrenderer.h
 )
 
@@ -76,6 +93,7 @@ target_link_libraries(qt_check_fever LINK_PUBLIC
     ${ZED_LIBS}
     ${SPECIAL_OS_LIBS}
     ${OGL_LIBS}
+    ${OpenCV_LIBS}
 )
 
 qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})

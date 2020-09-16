@@ -19,17 +19,21 @@ MainWindow::MainWindow(QWidget *parent)
     ui->openGLWidget_img->setOverlayOffsetScale(mOvHorOffset,mOvVerOffset,mOvScale);
     ui->openGLWidget_thermal->setOnlyFlir();
 
-    ui->statusbar->addWidget(&mStatusLabel);
+    ui->statusbar->addWidget(&mZedStatusLabel);
+    ui->statusbar->addPermanentWidget(&mLeptonStatusLabel);
 
-    connect( &mGrabber, &Grabber::statusMessage, this, &MainWindow::onStatusMessage );
-    connect( &mGrabber, &Grabber::zedImageReady, this, &MainWindow::onNewZedImage );
-    connect( &mGrabber, &Grabber::zedObjListReady, this, &MainWindow::onNewZedObjList );
+    connect( &mZedGrabber, &ZedGrabber::statusMessage, this, &MainWindow::onZedStatusMessage );
+    connect( &mZedGrabber, &ZedGrabber::zedImageReady, this, &MainWindow::onNewZedImage );
+    connect( &mZedGrabber, &ZedGrabber::zedObjListReady, this, &MainWindow::onNewZedObjList );
+
+    connect( &mLeptonGrabber, &LeptonGrabber::statusMessage, this, &MainWindow::onLeptonStatusMessage );
+    connect( &mLeptonGrabber, &LeptonGrabber::leptonImageReady, this, &MainWindow::onNewLeptonImage );
 
     bool zed_ok=false;
 
     do
     {
-        zed_ok = mGrabber.openZed();
+        zed_ok = mZedGrabber.openZed();
 
         if(!zed_ok)
         {
@@ -43,10 +47,19 @@ MainWindow::MainWindow(QWidget *parent)
         }
     } while(!zed_ok);
 
+    // TODO check
+    if( !mLeptonGrabber.openLepton() )
+    {
+        QMessageBox::critical(this, tr("Error"), tr("FLIR Lepton module not responding"),
+                              QMessageBox::StandardButton::Abort);
+
+        exit(EXIT_FAILURE);
+    }
 
     connect( ui->openGLWidget_img, &OglRenderer::nearestPerson, this, &MainWindow::onPersonDist );
 
-    mGrabber.startCapture();
+    mLeptonGrabber.startCapture();
+    mZedGrabber.startCapture();
 }
 
 MainWindow::~MainWindow()
@@ -54,14 +67,19 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::onStatusMessage(QString message)
+void MainWindow::onZedStatusMessage(QString message)
 {
-    mStatusLabel.setText(message);
+    mZedStatusLabel.setText(message);
+}
+
+void MainWindow::onLeptonStatusMessage(QString message)
+{
+    mLeptonStatusLabel.setText(message);
 }
 
 void MainWindow::onNewZedImage()
 {
-    QImage dummyFlir(QSize(160,120), QImage::Format_Grayscale8);
+    /*QImage dummyFlir(QSize(160,120), QImage::Format_Grayscale8);
     dummyFlir.fill(QColor(0,0,0,150));
     static quint8 r = 0;
     static quint8 c = 0;
@@ -70,19 +88,27 @@ void MainWindow::onNewZedImage()
     dummyFlir.setPixel(159-(c++)%160,119-(r++)%120, qRgb(255,255,255));
     dummyFlir.setPixel(159-(c++)%160,(r++)%120, qRgb(255,255,255));
     dummyFlir.setPixel((c++)%160,119-(r++)%120, qRgb(255,255,255));
-    ui->openGLWidget_thermal->updateFlirImage(dummyFlir);
+    ui->openGLWidget_thermal->updateFlirImage(dummyFlir);*/
 
-    sl::Mat frame = mGrabber.getLastImage();
+    sl::Mat frame = mZedGrabber.getLastImage();
 
     ui->openGLWidget_img->updateZedImage(frame);
-    ui->openGLWidget_img->updateFlirImage(dummyFlir);
+    //ui->openGLWidget_img->updateFlirImage(dummyFlir);
 
     //qDebug() << tr("New Image");
 }
 
+void MainWindow::onNewLeptonImage()
+{
+    cv::Mat frame16 = mLeptonGrabber.getLastImageGray16();
+    cv::Mat frameRGB = mLeptonGrabber.getLastImageRGB();
+    //ui->openGLWidget_img->updateFlirImage();
+    ui->openGLWidget_thermal->updateFlirImage(frameRGB);
+}
+
 void MainWindow::onNewZedObjList()
 {
-    sl::Objects obj = mGrabber.getLastObjDet();
+    sl::Objects obj = mZedGrabber.getLastObjDet();
     ui->openGLWidget_img->updateZedObjects(obj);
 
     //qDebug() << tr("New Object List");

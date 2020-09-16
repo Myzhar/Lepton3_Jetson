@@ -6,7 +6,8 @@
 #include <QSettings>
 #include <QLabel>
 
-#include "grabber.h"
+#include "zedgrabber.h"
+#include "leptongrabber.h"
 
 
 
@@ -30,8 +31,10 @@ protected:
 protected slots:
     void onNewZedImage();
     void onNewZedObjList();
+    void onNewLeptonImage();
     void onPersonDist(qreal dist,qreal temp);
-    void onStatusMessage(QString message);
+    void onZedStatusMessage(QString message);
+    void onLeptonStatusMessage(QString message);
 
 private slots:
     void on_horizontalSlider_h_offset_valueChanged(int value);
@@ -43,13 +46,15 @@ private slots:
 private:
     Ui::MainWindow *ui;
 
-    Grabber mGrabber;
+    ZedGrabber mZedGrabber;
+    LeptonGrabber mLeptonGrabber;
 
     qint8 mOvHorOffset=0;
     qint8 mOvVerOffset=0;
     qreal mOvScale=1.0;
 
-    QLabel mStatusLabel;
+    QLabel mZedStatusLabel;
+    QLabel mLeptonStatusLabel;
 
 };
 #endif // MAINWINDOW_H
