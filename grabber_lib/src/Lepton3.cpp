@@ -45,7 +45,7 @@ Lepton3::Lepton3(std::string spiDevice, std::string i2c_port, DebugLvl dbgLvl )
     mSpiDevice = spiDevice;
     mSpiFd = -1;
 
-    mSpiMode = SPI_MODE_3; // CPOL=1 (Clock Idle high level),
+    mSpiMode = SPI_MODE_1;
     // CPHA=1 (SDO transmit/change edge idle to active)
     mSpiBits = 8;
     mSpiSpeed = 20000000; // 20Mhz max speed according to Lepton3 datasheet
