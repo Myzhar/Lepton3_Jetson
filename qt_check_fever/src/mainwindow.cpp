@@ -61,7 +61,7 @@ void MainWindow::onStatusMessage(QString message)
 
 void MainWindow::onNewZedImage()
 {
-    QImage dummyFlir(QSize(160,120), QImage::Format_Grayscale16);
+    QImage dummyFlir(QSize(160,120), QImage::Format_Grayscale8);
     dummyFlir.fill(QColor(0,0,0,150));
     static quint8 r = 0;
     static quint8 c = 0;
