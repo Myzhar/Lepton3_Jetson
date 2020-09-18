@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>864</width>
+    <width>874</width>
     <height>600</height>
    </rect>
   </property>
@@ -103,7 +103,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>864</width>
+     <width>874</width>
      <height>22</height>
     </rect>
    </property>
@@ -134,7 +134,7 @@
      <item>
       <widget class="QLabel" name="label_7">
        <property name="text">
-        <string>Raw Thermal Image</string>
+        <string>Full Thermal Image</string>
        </property>
       </widget>
      </item>
@@ -168,6 +168,13 @@
       </spacer>
      </item>
      <item>
+      <widget class="QCheckBox" name="checkBox_enable_calibration">
+       <property name="text">
+        <string>Enable Calibration</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QLabel" name="label">
        <property name="text">
         <string>Horiz. Offset</string>
@@ -176,6 +183,9 @@
      </item>
      <item>
       <widget class="QSlider" name="horizontalSlider_h_offset">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="minimumSize">
         <size>
          <width>160</width>
@@ -183,10 +193,10 @@
         </size>
        </property>
        <property name="minimum">
-        <number>-50</number>
+        <number>-250</number>
        </property>
        <property name="maximum">
-        <number>50</number>
+        <number>250</number>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -202,6 +212,9 @@
      </item>
      <item>
       <widget class="QSlider" name="horizontalSlider_v_offset">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="minimumSize">
         <size>
          <width>160</width>
@@ -209,10 +222,10 @@
         </size>
        </property>
        <property name="minimum">
-        <number>-50</number>
+        <number>-250</number>
        </property>
        <property name="maximum">
-        <number>50</number>
+        <number>250</number>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -228,6 +241,9 @@
      </item>
      <item>
       <widget class="QSlider" name="horizontalSlider_scale_factor">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="minimumSize">
         <size>
          <width>160</width>
@@ -256,6 +272,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="pushButton_reset_overlay">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>Reset</string>
        </property>

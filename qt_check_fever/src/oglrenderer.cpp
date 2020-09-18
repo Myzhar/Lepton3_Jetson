@@ -3,6 +3,8 @@
 #include <QPainter>
 #include <QSurfaceFormat>
 
+#include <QDebug>
+
 OglRenderer::OglRenderer(QWidget *parent)
     : QOpenGLWidget(parent)
 {
@@ -17,12 +19,13 @@ void OglRenderer::updateZedImage(sl::Mat& image)
     this->update();
 }
 
-void OglRenderer::updateFlirImage(cv::Mat& image)
+void OglRenderer::updateFlirImages(cv::Mat& rgb, cv::Mat &raw16)
 {
-    cv::Mat rgb;
-
-    mFlirImg = QImage(rgb.data, image.cols, image.rows,
+    mOcvRGB = rgb.clone();
+    mFlirImg = QImage(mOcvRGB.data, rgb.cols, rgb.rows,
                       QImage::Format_RGB888);
+
+    mOcvRaw16 = raw16.clone();
 
     if(mOnlyFlir)
     {
@@ -65,14 +68,13 @@ void OglRenderer::paintEvent(QPaintEvent*)
 
     painter.drawImage(QRect(xOffset,yOffset,mRenderImage.width(),mRenderImage.height()), mRenderImage);
 
-
     QImage flirScaled;
     int xOffset_flir=0;
     int yOffset_flir=0;
     if(!mFlirImg.isNull())
     {
         flirScaled = mFlirImg.scaledToHeight( mOvScale*mRenderImage.height() );
-        flirScaled = flirScaled.convertToFormat( QImage::Format_ARGB32 );
+        flirScaled = flirScaled.convertToFormat(QImage::Format_ARGB32);
 
         xOffset_flir = mOvHorOffset + xOffset + (mRenderImage.width() - flirScaled.width())/2;
         yOffset_flir = mOvVerOffset + yOffset + (mRenderImage.height() - flirScaled.height())/2;
@@ -83,7 +85,13 @@ void OglRenderer::paintEvent(QPaintEvent*)
             mAlphaChValid=true;
         }
 
-        mAlphaCh.fill(QColor(0,0,0,0));
+        if(!mCalibrating) {
+            mAlphaCh.fill(QColor(0,0,0,0));
+        }
+        else
+        {
+            mAlphaCh.fill(QColor(mAlphaVal,mAlphaVal,mAlphaVal,mAlphaVal));
+        }
     }
 
     qreal min_dist=100.0;
@@ -114,13 +122,92 @@ void OglRenderer::paintEvent(QPaintEvent*)
             rect.setBottomRight( QPoint(rect_right,rect_bottom));
             painter.drawRoundedRect(rect,3*penSize,3*penSize);
 
-            if(!mAlphaCh.isNull() && mAlphaChValid)
+            int valid_count=0;
+            double temp_sum=0.0;
+
+            //if(!mCalibrating)
             {
-                QPainter p(&mAlphaCh);
-                p.setPen(Qt::NoPen);
-                p.setBrush(QBrush(QColor(mAlphaVal,mAlphaVal,mAlphaVal,mAlphaVal)));
-                rect.moveCenter(QPoint(rect.center().x()-xOffset_flir,rect.center().y()-yOffset_flir));
-                p.drawRoundedRect(rect,3*penSize,3*penSize);
+                uint16_t* data16 = (uint16_t*)(&mOcvRaw16.data[0]);
+
+                if(!mAlphaCh.isNull() && mAlphaChValid)
+                {
+                    QPainter p(&mAlphaCh);
+                    p.setPen(Qt::NoPen);
+                    p.setBrush(QBrush(QColor(mAlphaVal,mAlphaVal,mAlphaVal,mAlphaVal)));
+                    rect.moveCenter(QPoint(rect.center().x()-xOffset_flir,rect.center().y()-yOffset_flir));
+
+                    if(!mCalibrating)
+                    {
+                        p.drawRoundedRect(rect,3*penSize,3*penSize);
+                    }
+
+                    double ratio = static_cast<double>(mOcvRaw16.rows)/flirScaled.height();
+
+                    int init_U = rect.left();
+                    init_U = qMax(0,init_U);
+                    int init_V = rect.top();
+                    init_V = qMax(0,init_V);
+                    int fin_U = rect.right();
+                    fin_U = qMin(fin_U,mAlphaCh.width());
+                    int fin_V = rect.bottom();
+                    fin_V = qMin(fin_V,mAlphaCh.height());
+
+                    if(mCalibrating)
+                    {
+                        cv::rectangle(mOcvRGB, cv::Rect(init_U*ratio,init_V*ratio,(fin_U-init_U)*ratio,(fin_V-init_V)*ratio), cv::Scalar::all(255) );
+                        //cv::imshow("Test",mOcvRGB);
+                    }
+
+                    for( int V=init_V; V<fin_V; V++ )
+                    {
+                        int v = qRound(static_cast<double>(V)*ratio+0.5);
+
+                        for( int U=init_U; U<fin_U; U++ )
+                        {
+                            int u = qRound(static_cast<double>(U)*ratio+0.5);
+
+                            int i = u+v*mOcvRaw16.cols;
+                            double temp = (data16[i]*temp_scale_factor+0.05);
+
+                            //qDebug() << tr("(%1,%2) Temp: %3").arg(u).arg(v).arg(temp);
+
+                            if( temp >= temp_min_human && temp <= temp_max_human )
+                            {
+                                //qDebug() << tr("(%1,%2) Temp human: %3").arg(u).arg(v).arg(temp);
+                                int R,G,B;
+
+                                valid_count++;
+                                temp_sum += temp;
+
+                                if( temp >= temp_min_human && temp < temp_warn )
+                                {
+                                    R = COL_NORM_TEMP[0];
+                                    G = COL_NORM_TEMP[1];
+                                    B = COL_NORM_TEMP[2];
+                                }
+                                else if( temp >= temp_warn && temp < temp_fever )
+                                {
+                                    R = COL_WARN_TEMP[0];
+                                    G = COL_WARN_TEMP[1];
+                                    B = COL_WARN_TEMP[2];
+                                }
+                                else if( temp >= temp_fever && temp <= temp_max_human )
+                                {
+                                    R = COL_FEVER_TEMP[0];
+                                    G = COL_FEVER_TEMP[1];
+                                    B = COL_FEVER_TEMP[2];
+                                }
+
+                                flirScaled.setPixelColor(U,V,QColor(R,G,B,mAlphaVal));
+                            }
+                        }
+                    }
+                }
+            }
+
+            if(valid_count>0)
+            {
+                temperature = temp_sum/valid_count;
             }
 
             pen.setWidth(2*penSize);
@@ -153,9 +240,11 @@ void OglRenderer::paintEvent(QPaintEvent*)
             text_rect.setBottom(rect_top-5);
             text_rect.setTop(rect_top-20);
 
-            // TODO Calculate mean temperature inside the Bounding Box and print on screen emitting a signal to
-            // update the GUI
-            painter.drawText(text_rect, "Temp" );
+            QString temp_st = "Temp: ---";
+            if( valid_count>0 ){
+                temp_st = tr("Temp: %1").arg(temp_sum/valid_count, 3, 'f', 1);
+            }
+            painter.drawText(text_rect, temp_st );
 
             text_rect.setBottom(rect_bottom+25);
             text_rect.setTop(rect_bottom+5);
@@ -172,10 +261,10 @@ void OglRenderer::paintEvent(QPaintEvent*)
             }
             // <----- Text info
 
-            if(nose_dist<min_dist)
+            if(nose_dist<min_dist && valid_count>0)
             {
                 min_dist = nose_dist;
-                temperature = 36.5;
+                temperature = temp_sum/valid_count;
             }
         }
     }
@@ -192,6 +281,4 @@ void OglRenderer::paintEvent(QPaintEvent*)
     }
 
     emit nearestPerson(min_dist,temperature);
-
-
 }

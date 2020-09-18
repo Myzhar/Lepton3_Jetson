@@ -22,6 +22,8 @@ public:
     cv::Mat& getLastImageGray16();
     cv::Mat& getLastImageRGB();
 
+    inline double getScaleFactor(){return mTempScaleFactor;}
+
 protected:
     void grabFunc();
     bool set_rgb_mode(bool enable);
@@ -42,6 +44,8 @@ private:
     std::mutex mImgMutex;
 
     bool mStopRequest = false;
+
+    const double mTempScaleFactor = 0.0092; // 150/(2^14-1))
 };
 
 #endif // LEPTONGRABBER_H

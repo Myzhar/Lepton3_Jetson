@@ -114,7 +114,7 @@ void LeptonGrabber::grabFunc()
             }
             // <---- Initialize OpenCV data
 
-            if(frameIdx==100)
+            if(frameIdx==30)
             {
                 emit statusMessage( "Lepton running" );
             }
@@ -122,12 +122,12 @@ void LeptonGrabber::grabFunc()
             if(++frameIdx == 1000)
             {
                 emit statusMessage( "Performing Lepton FFC" );
-                frameIdx=0;
 
                 if( mLepton->doFFC() == LEP_OK )
                 {
                     emit statusMessage( "Lepton FFC completed" );
                 }
+                frameIdx=0;
             }
 
             {
@@ -137,14 +137,14 @@ void LeptonGrabber::grabFunc()
                 mLeptonGray16 = frame16.clone();
 
                 // ----> Normalization for displaying
-                cv::Mat thermFrame;
-                double temp_scale_factor = 0.0092; // 150/(2^14-1))
-                normalizeFrame( frame16, thermFrame, 27.5, 10, temp_scale_factor );
+                cv::Mat thermFrame;                
+                normalizeFrame( frame16, thermFrame, 27.5, 40, mTempScaleFactor );
                 // Conversion to RGB
                 cv::cvtColor( thermFrame, mLeptonRGB, cv::COLOR_GRAY2BGR );
                 // <---- Normalization for displaying
 
-                cv::imshow("Test", thermFrame );
+                //cv::imshow("Test", mLeptonRGB );
+                //cv::waitKey(5);
 
                 emit leptonImageReady();
             }

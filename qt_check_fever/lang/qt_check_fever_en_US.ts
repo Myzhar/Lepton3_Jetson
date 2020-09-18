@@ -29,12 +29,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/leptongrabber.cpp" line="78"/>
+        <location filename="../src/leptongrabber.cpp" line="83"/>
         <source>Lepton Grabber thread started</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/leptongrabber.cpp" line="143"/>
+        <location filename="../src/leptongrabber.cpp" line="157"/>
         <source>Lepton Grabber thread finished</source>
         <translation type="unfinished"></translation>
     </message>
@@ -91,6 +91,15 @@
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="137"/>
+        <source>Full Thermal Image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.ui" line="173"/>
+        <source>Enable Calibration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="258"/>
         <location filename="../../build-qt_check_fever-Desktop-Default/qt_check_fever_autogen/include/ui_mainwindow.h" line="258"/>
         <location filename="../../build-qt_check_fever-Desktop-Release/qt_check_fever_autogen/include/ui_mainwindow.h" line="258"/>
@@ -98,7 +107,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="173"/>
+        <location filename="../src/mainwindow.ui" line="180"/>
         <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="259"/>
         <location filename="../../build-qt_check_fever-Desktop-Default/qt_check_fever_autogen/include/ui_mainwindow.h" line="259"/>
         <location filename="../../build-qt_check_fever-Desktop-Release/qt_check_fever_autogen/include/ui_mainwindow.h" line="259"/>
@@ -106,7 +115,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="199"/>
+        <location filename="../src/mainwindow.ui" line="209"/>
         <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="260"/>
         <location filename="../../build-qt_check_fever-Desktop-Default/qt_check_fever_autogen/include/ui_mainwindow.h" line="260"/>
         <location filename="../../build-qt_check_fever-Desktop-Release/qt_check_fever_autogen/include/ui_mainwindow.h" line="260"/>
@@ -114,7 +123,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="225"/>
+        <location filename="../src/mainwindow.ui" line="238"/>
         <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="261"/>
         <location filename="../../build-qt_check_fever-Desktop-Default/qt_check_fever_autogen/include/ui_mainwindow.h" line="261"/>
         <location filename="../../build-qt_check_fever-Desktop-Release/qt_check_fever_autogen/include/ui_mainwindow.h" line="261"/>
@@ -122,7 +131,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="260"/>
+        <location filename="../src/mainwindow.ui" line="279"/>
         <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="262"/>
         <location filename="../../build-qt_check_fever-Desktop-Default/qt_check_fever_autogen/include/ui_mainwindow.h" line="262"/>
         <location filename="../../build-qt_check_fever-Desktop-Release/qt_check_fever_autogen/include/ui_mainwindow.h" line="262"/>
@@ -130,7 +139,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="275"/>
+        <location filename="../src/mainwindow.ui" line="294"/>
         <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="251"/>
         <location filename="../../build-qt_check_fever-Desktop-Default/qt_check_fever_autogen/include/ui_mainwindow.h" line="251"/>
         <location filename="../../build-qt_check_fever-Desktop-Release/qt_check_fever_autogen/include/ui_mainwindow.h" line="251"/>
@@ -138,28 +147,28 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="40"/>
-        <location filename="../src/mainwindow.cpp" line="53"/>
+        <location filename="../src/mainwindow.cpp" line="43"/>
+        <location filename="../src/mainwindow.cpp" line="56"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="40"/>
+        <location filename="../src/mainwindow.cpp" line="43"/>
         <source>Please connect a ZED2 Camera</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="53"/>
+        <location filename="../src/mainwindow.cpp" line="56"/>
         <source>FLIR Lepton module not responding</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="120"/>
+        <location filename="../src/mainwindow.cpp" line="186"/>
         <source>%1 m</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="121"/>
+        <location filename="../src/mainwindow.cpp" line="187"/>
         <source>%1°C</source>
         <translation type="unfinished"></translation>
     </message>
@@ -167,7 +176,12 @@
 <context>
     <name>OglRenderer</name>
     <message>
-        <location filename="../src/oglrenderer.cpp" line="171"/>
+        <location filename="../src/oglrenderer.cpp" line="155"/>
+        <source>%1,%2,%3,%4 - %5x%6</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/oglrenderer.cpp" line="247"/>
         <source>%1 m</source>
         <translation type="unfinished"></translation>
     </message>

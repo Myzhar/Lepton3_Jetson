@@ -43,6 +43,8 @@ private slots:
 
     void on_pushButton_reset_overlay_clicked();
 
+    void on_checkBox_enable_calibration_clicked(bool checked);
+
 private:
     Ui::MainWindow *ui;
 

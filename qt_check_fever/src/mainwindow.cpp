@@ -2,6 +2,7 @@
 #include "./ui_mainwindow.h"
 
 #include <QMessageBox>
+#include <QCheckBox>
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -21,6 +22,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->statusbar->addWidget(&mZedStatusLabel);
     ui->statusbar->addPermanentWidget(&mLeptonStatusLabel);
+
+    connect( ui->checkBox_enable_calibration, &QCheckBox::clicked, ui->openGLWidget_img, &OglRenderer::onSetCalibrationMode );
 
     connect( &mZedGrabber, &ZedGrabber::statusMessage, this, &MainWindow::onZedStatusMessage );
     connect( &mZedGrabber, &ZedGrabber::zedImageReady, this, &MainWindow::onNewZedImage );
@@ -102,8 +105,70 @@ void MainWindow::onNewLeptonImage()
 {
     cv::Mat frame16 = mLeptonGrabber.getLastImageGray16();
     cv::Mat frameRGB = mLeptonGrabber.getLastImageRGB();
-    //ui->openGLWidget_img->updateFlirImage();
-    ui->openGLWidget_thermal->updateFlirImage(frameRGB);
+
+//    // ----> Human temperature colors
+//    double temp_scale_factor = mLeptonGrabber.getScaleFactor();
+
+//    int count_human=0;
+//    int count_warning=0;
+//    int count_fever=0;
+
+//    const double temp_min_human = 34.5f;
+//    const double temp_warn = 37.0f;
+//    const double temp_fever = 37.5f;
+//    const double temp_max_human = 42.0f;
+
+//    const cv::Scalar COL_NORM_TEMP(15,200,15);
+//    const cv::Scalar COL_WARN_TEMP(10,170,200);
+//    const cv::Scalar COL_FEVER_TEMP(40,40,220);
+
+//    uint16_t* data16 = (uint16_t*)(&frame16.data[0]);
+
+//    int w = frameRGB.cols;
+//    int h = frameRGB.rows;
+
+//    double simul_temp = 0.0;
+
+//    for( int i=0; i<(w*h); i++ )
+//    {
+//        // Temperature from thermal data adjusted for simulation
+//        double temp = (data16[i]*temp_scale_factor+0.05);
+
+//        if( temp >= temp_min_human && temp <= temp_max_human )
+//        {
+//            count_human++;
+//            temp += simul_temp;
+
+//            int u = i%w;
+//            int v = i/w;
+//            cv::Vec3b& temp_col = frameRGB.at<cv::Vec3b>(v,u);
+
+//            if( temp >= temp_min_human && temp < temp_warn )
+//            {
+//                temp_col[0] = (double)temp_col[0]/255. * COL_NORM_TEMP[0];
+//                temp_col[1] = (double)temp_col[1]/255. * COL_NORM_TEMP[1];
+//                temp_col[2] = (double)temp_col[2]/255. * COL_NORM_TEMP[2];
+//            }
+//            else if( temp >= temp_warn && temp < temp_fever )
+//            {
+//                temp_col[0] = (double)temp_col[0]/255. * COL_WARN_TEMP[0];
+//                temp_col[1] = (double)temp_col[1]/255. * COL_WARN_TEMP[1];
+//                temp_col[2] = (double)temp_col[2]/255. * COL_WARN_TEMP[2];
+//                count_warning++;
+//            }
+//            else if( temp >= temp_fever && temp <= temp_max_human )
+//            {
+//                temp_col[0] = (double)temp_col[0]/255. * COL_FEVER_TEMP[0];
+//                temp_col[1] = (double)temp_col[1]/255. * COL_FEVER_TEMP[1];
+//                temp_col[2] = (double)temp_col[2]/255. * COL_FEVER_TEMP[2];
+//                count_fever++;
+//            }
+//        }
+//    }
+//    // <---- Human temperature colors
+
+    ui->openGLWidget_img->updateFlirImages(frameRGB,frame16);
+    ui->openGLWidget_thermal->updateFlirImages(frameRGB,frame16);
 }
 
 void MainWindow::onNewZedObjList()
@@ -192,4 +257,12 @@ void MainWindow::on_pushButton_reset_overlay_clicked()
     ui->horizontalSlider_h_offset->setValue(mOvHorOffset);
     ui->horizontalSlider_v_offset->setValue(mOvVerOffset);
     ui->horizontalSlider_scale_factor->setValue(mOvScale*100);
+}
+
+void MainWindow::on_checkBox_enable_calibration_clicked(bool checked)
+{
+    ui->horizontalSlider_h_offset->setEnabled(checked);
+    ui->horizontalSlider_v_offset->setEnabled(checked);
+    ui->horizontalSlider_scale_factor->setEnabled(checked);
+    ui->pushButton_reset_overlay->setEnabled(checked);
 }
