@@ -72,7 +72,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="210"/>
+        <location filename="../src/mainwindow.ui" line="212"/>
         <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="256"/>
         <location filename="../../build-qt_check_fever-Desktop-Default/qt_check_fever_autogen/include/ui_mainwindow.h" line="256"/>
         <location filename="../../build-qt_check_fever-Desktop-Release/qt_check_fever_autogen/include/ui_mainwindow.h" line="256"/>
@@ -87,12 +87,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="241"/>
+        <location filename="../src/mainwindow.ui" line="243"/>
         <source>Full Thermal Image</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="305"/>
+        <location filename="../src/mainwindow.ui" line="327"/>
         <source>Enable Calibration</source>
         <translation type="unfinished"></translation>
     </message>
@@ -115,33 +115,40 @@
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="166"/>
-        <location filename="../src/mainwindow.cpp" line="201"/>
+        <location filename="../src/mainwindow.cpp" line="148"/>
         <source>--.- m</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="187"/>
-        <source>Temperature N/A</source>
+        <location filename="../src/mainwindow.ui" line="188"/>
+        <location filename="../src/mainwindow.cpp" line="141"/>
+        <source>Temperature
+N/A</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="231"/>
-        <location filename="../src/mainwindow.ui" line="426"/>
+        <location filename="../src/mainwindow.ui" line="233"/>
+        <location filename="../src/mainwindow.ui" line="448"/>
         <source>Configuration Panel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="264"/>
+        <location filename="../src/mainwindow.ui" line="266"/>
         <source>Simulate Fever</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="283"/>
+        <location filename="../src/mainwindow.ui" line="285"/>
         <source>TextLabel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="312"/>
+        <location filename="../src/mainwindow.ui" line="307"/>
+        <source>Show Skeleton</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.ui" line="334"/>
         <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="259"/>
         <location filename="../../build-qt_check_fever-Desktop-Default/qt_check_fever_autogen/include/ui_mainwindow.h" line="259"/>
         <location filename="../../build-qt_check_fever-Desktop-Release/qt_check_fever_autogen/include/ui_mainwindow.h" line="259"/>
@@ -149,7 +156,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="341"/>
+        <location filename="../src/mainwindow.ui" line="363"/>
         <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="260"/>
         <location filename="../../build-qt_check_fever-Desktop-Default/qt_check_fever_autogen/include/ui_mainwindow.h" line="260"/>
         <location filename="../../build-qt_check_fever-Desktop-Release/qt_check_fever_autogen/include/ui_mainwindow.h" line="260"/>
@@ -157,7 +164,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="370"/>
+        <location filename="../src/mainwindow.ui" line="392"/>
         <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="261"/>
         <location filename="../../build-qt_check_fever-Desktop-Default/qt_check_fever_autogen/include/ui_mainwindow.h" line="261"/>
         <location filename="../../build-qt_check_fever-Desktop-Release/qt_check_fever_autogen/include/ui_mainwindow.h" line="261"/>
@@ -165,7 +172,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.ui" line="411"/>
+        <location filename="../src/mainwindow.ui" line="433"/>
         <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="262"/>
         <location filename="../../build-qt_check_fever-Desktop-Default/qt_check_fever_autogen/include/ui_mainwindow.h" line="262"/>
         <location filename="../../build-qt_check_fever-Desktop-Release/qt_check_fever_autogen/include/ui_mainwindow.h" line="262"/>
@@ -180,44 +187,62 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="26"/>
+        <location filename="../src/mainwindow.cpp" line="31"/>
         <source>+0.0°C</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="46"/>
-        <location filename="../src/mainwindow.cpp" line="59"/>
+        <location filename="../src/mainwindow.cpp" line="51"/>
+        <location filename="../src/mainwindow.cpp" line="64"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="46"/>
+        <location filename="../src/mainwindow.cpp" line="51"/>
         <source>Please connect a ZED2 Camera</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="59"/>
+        <location filename="../src/mainwindow.cpp" line="64"/>
         <source>FLIR Lepton module not responding</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="189"/>
+        <location filename="../src/mainwindow.cpp" line="118"/>
         <source>%1 m</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="191"/>
+        <location filename="../src/mainwindow.cpp" line="120"/>
         <source>%1 °C</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="195"/>
-        <location filename="../src/mainwindow.cpp" line="200"/>
+        <location filename="../src/mainwindow.cpp" line="124"/>
+        <source>NO
+FEVER</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="129"/>
+        <source>FEVER
+WARNING</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="134"/>
+        <source>FEVER
+ALERT</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/mainwindow.cpp" line="140"/>
+        <location filename="../src/mainwindow.cpp" line="147"/>
         <source>--.- °C</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/mainwindow.cpp" line="287"/>
+        <location filename="../src/mainwindow.cpp" line="237"/>
         <source>+%1°C</source>
         <translation type="unfinished"></translation>
     </message>
@@ -225,12 +250,12 @@
 <context>
     <name>OglRenderer</name>
     <message>
-        <location filename="../src/oglrenderer.cpp" line="238"/>
-        <source>Temp: %1</source>
+        <location filename="../src/oglrenderer.cpp" line="278"/>
+        <source>%1 °C</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/oglrenderer.cpp" line="252"/>
+        <location filename="../src/oglrenderer.cpp" line="292"/>
         <source>%1 m</source>
         <translation type="unfinished"></translation>
     </message>

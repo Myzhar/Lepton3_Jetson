@@ -58,7 +58,7 @@ public:
      */
     const uint8_t* getLastFrameRGB( uint8_t& width, uint8_t& height );
     
-    // >>>>> Controls
+    // ----> Controls
     LEP_RESULT getSensorTemperatureK(float& tempK); //!< Get Temperature of the Flir Sensor in °K
     
     LEP_RESULT enableRadiometry( bool enable );    //!< Enable/Disable radiometry
@@ -70,11 +70,11 @@ public:
     LEP_RESULT getGainMode( LEP_SYS_GAIN_MODE_E& mode); //!< Get Lepton3 gain mode
     LEP_RESULT setGainMode( LEP_SYS_GAIN_MODE_E newMode); //!< Set Lepton3 gain mode
 
-    // >>>>> Not yet available on Lepton3
+    // ----> Not yet available on Lepton3
     //LEP_RESULT getSpotROI( uint16_t& x, uint16_t& y, uint16_t& w, uint16_t& h ); //!< Get Spotmeter region
     //LEP_RESULT setSpotROI( uint16_t x, uint16_t y, uint16_t w, uint16_t h );     //!< Set Spotmeter region
     //LEP_RESULT getSpotInfo( float& valueK, float& minK, float& maxK, uint16_t& count ); //!< Get Spotmeter info
-    // <<<<< Not yet available on Lepton3
+    // <---- Not yet available on Lepton3
 
     LEP_RESULT enableTelemetry( bool enable ); //!< Enable/Disable telemetry
     LEP_RESULT getTelemetryStatus( bool &status ); //!< Verify if telemetry is enabled
@@ -95,7 +95,7 @@ public:
 
     LEP_RESULT saveParams(); //!< Save current parameters to OTP. They will be reloaded after reboot (@NOTE: requires 5.9V on PIN 17 - VPROG, see Datasheet pg 34)
     LEP_RESULT loadParams(); //!< Reload saved parameters from OTP.
-    // <<<<< Controls
+    // <---- Controls
 
 protected:
     void thread_func();
@@ -111,7 +111,7 @@ protected:
     void setVoSPIData();    //!< Set VoSPI data values according to the configuration of the sensor
 
 private:
-    // >>>>> VoSPI
+    // ----> VoSPI
     std::string mSpiDevice; //!< SPI port device name
     int mSpiFd;             //!< SPI descriptor
     unsigned char mSpiMode; //!< SPI mode
@@ -136,15 +136,15 @@ private:
     struct spi_ioc_transfer mSpiTR; //!< Data structure for SPI ioctl
 
     int mCurrSegm;          //!< Index of the last valid acquired segment (-1 if Lost Sync)
-    // <<<<< VoSPI
+    // <---- VoSPI
 
-    // >>>>> Lepton control (CCI)
+    // ----> Lepton control (CCI)
     bool mCciConnected;
     std::string mCciPort;
     LEP_CAMERA_PORT_DESC_T mCciConnPort;
 
     bool CciConnect();      //!< Connect CCI (I2C)
-    // <<<<< Lepton control (CCI)
+    // <---- Lepton control (CCI)
 
     std::thread mThread;
     std::mutex mBuffMutex;

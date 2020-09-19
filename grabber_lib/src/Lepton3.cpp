@@ -26,12 +26,12 @@ Lepton3::Lepton3(std::string spiDevice, std::string i2c_port, DebugLvl dbgLvl )
     : mThread()
     , mRgbEnabled(false)
 {
-    // >>>>> CCI
+    // ----> CCI
     mCciConnected = false;
     mCciPort = i2c_port;
-    // <<<<< CCI
+    // <---- CCI
 
-    // >>>>> Multi buffer init
+    // ----> Multi buffer init
     for( int i=0; i<MULTI_BUFF_SIZE; i++ )
     {
         mSpiRawFrameBuf[i] = NULL;
@@ -39,9 +39,9 @@ Lepton3::Lepton3(std::string spiDevice, std::string i2c_port, DebugLvl dbgLvl )
         mDataFrameBufRGB[i] = NULL;
     }
     mBuffIdx=0;
-    // <<<<< Multi buffer init
+    // <---- Multi buffer init
 
-    // >>>>> VoSPI
+    // ----> VoSPI
     mSpiDevice = spiDevice;
     mSpiFd = -1;
 
@@ -49,6 +49,7 @@ Lepton3::Lepton3(std::string spiDevice, std::string i2c_port, DebugLvl dbgLvl )
     // CPHA=1 (SDO transmit/change edge idle to active)
     mSpiBits = 8;
     mSpiSpeed = 16000000; // 20Mhz max speed according to Lepton3 datasheet
+
 
     mSpiTR.tx_buf = (unsigned long)NULL;
     mSpiTR.delay_usecs = 50;
@@ -58,18 +59,18 @@ Lepton3::Lepton3(std::string spiDevice, std::string i2c_port, DebugLvl dbgLvl )
     mSpiTR.tx_nbits = 0;
     mSpiTR.rx_nbits = 0;
     mSpiTR.pad = 0;
-    // <<<<< VoSPI
+    // <---- VoSPI
 
     setVoSPIData();
 
-    // >>>>> Output Frame buffers
+    // ----> Output Frame buffers
     for( int i=0; i<MULTI_BUFF_SIZE; i++ )
     {
         mDataFrameBuf16[i] = new uint16_t[FRAME_W*FRAME_H];
         mDataFrameBufRGB[i] = new uint8_t[FRAME_W*FRAME_H*3];
         mDataValid[i] = false;
     }
-    // <<<<< Output Frame buffers
+    // <---- Output Frame buffers
 
     mDebugLvl = dbgLvl;
 
@@ -106,7 +107,7 @@ void Lepton3::setVoSPIData()
 
     mPacketCount  = 60;  // default no Telemetry
 
-    // >>>>> Check Telemetry
+    // ----> Check Telemetry
     bool telemEnable;
     if( getTelemetryStatus( telemEnable ) == LEP_OK )
     {
@@ -115,9 +116,9 @@ void Lepton3::setVoSPIData()
             mPacketCount = 61;
         }
     }
-    // <<<<< Check Telemetry
+    // <---- Check Telemetry
 
-    // >>>>> Check Packet Size
+    // ----> Check Packet Size
     LEP_OEM_VIDEO_OUTPUT_FORMAT_E format;
     if( getVideoOutputFormat( format ) == LEP_OK )
     {
@@ -137,7 +138,7 @@ void Lepton3::setVoSPIData()
         mPacketSize   = 164; // default 14 bit raw data
         mRgbEnabled = false;
     }
-    // <<<<< Check Packet Size
+    // <---- Check Packet Size
 
 
     mSegmentCount = 4;   // 4 segments for each unique frame
@@ -158,7 +159,7 @@ void Lepton3::setVoSPIData()
     }
 
     mBuffIdx = 0;
-    // <<<<< VoSPI data
+    // <---- VoSPI data
 }
 
 void Lepton3::start()
@@ -279,7 +280,7 @@ int Lepton3::SpiReadSegment()
        [Packet Header (16 bit) not equal to xFxx and Packet ID equal to 0]
     *********************************************************************************************/
 
-    // >>>>> Wait first valid packet
+    // ----> Wait first valid packet
     mSpiTR.cs_change = 0;
     mSpiTR.rx_buf = (unsigned long)(segmentAddr);
     mSpiTR.len = mPacketSize;
@@ -303,7 +304,7 @@ int Lepton3::SpiReadSegment()
         if( segmentAddr[1] == 0 ) // First valid packet
             break;
     }
-    // <<<<< Wait first valid packet */
+    // <---- Wait first valid packet */
 
     /*********************************************************************************************
     // 3) Read the full segment
@@ -311,7 +312,7 @@ int Lepton3::SpiReadSegment()
                 be decreased by a packet size and buffer address must be shifted of a packet size
     *********************************************************************************************/
 
-    // >>>>> Segment reading
+    // ----> Segment reading
     mSpiTR.rx_buf = (unsigned long)(segmentAddr+mPacketSize); // First Packet has been read above
     mSpiTR.len = mSegmSize-mPacketSize;
     mSpiTR.cs_change = 0; // /CS asserted after "ioctl"
@@ -322,13 +323,13 @@ int Lepton3::SpiReadSegment()
         cerr << "Error reading full segment from SPI" << "\r\n";
         return -1;
     }
-    // <<<<< Segment reading
+    // <---- Segment reading
 
     /*********************************************************************************************
     // 4) Get the Segment ID from packet #20 (21th packet)
     *********************************************************************************************/
 
-    // >>>>> Segment ID
+    // ----> Segment ID
     // Segment ID is written in the 21th Packet int the bit 1-3 of the first byte
     // (the first bit is always 0)
     // Packet number is written in the bit 4-7 of the first byte
@@ -351,7 +352,7 @@ int Lepton3::SpiReadSegment()
     }
 
     int segmentID = (segmentAddr[20*mPacketSize] & 0x70) >> 4;
-    // <<<<< Segment ID
+    // <---- Segment ID
 
     return segmentID;
 }
@@ -390,7 +391,7 @@ void Lepton3::thread_func()
 
         mBuffMutex.lock();
 
-        // >>>>> Timing info
+        // ----> Timing info
         double threadPeriod = mThreadWatch.toc(); // Get thread by thread time
         mThreadWatch.tic();
 
@@ -407,11 +408,11 @@ void Lepton3::thread_func()
             cout << "VoSPI segment acquire freq: " << (1000.0*1000.0)/threadPeriod
                  << " hz" << "\r\n";
         }
-        // <<<<< Timing info
+        // <---- Timing info
 
 
 
-        // >>>>> Acquire single segment
+        // ----> Acquire single segment
         if( mDebugLvl>=DBG_FULL )
         {
             testTime1.tic();
@@ -424,9 +425,9 @@ void Lepton3::thread_func()
             double elapsed = testTime1.toc();
             cout << "VoSPI segment read time " << elapsed << " usec" << "\r\n";
         }
-        // <<<<< Acquire single segment
+        // <---- Acquire single segment
 
-        // >>>>> Segment check
+        // ----> Segment check
         if( mDebugLvl>=DBG_FULL )
         {
             testTime1.tic();
@@ -468,7 +469,7 @@ void Lepton3::thread_func()
                                 "************************" << "\r\n";
                     }
 
-                    // >>>>> RAW to image data conversion
+                    // ----> RAW to image data conversion
                     if( mDebugLvl>=DBG_FULL )
                     {
                         testTime2.tic();
@@ -488,7 +489,7 @@ void Lepton3::thread_func()
                         double elapsed = testTime2.toc();
                         cout << "VoSPI frame conversion time " << elapsed << " usec" << "\r\n";
                     }
-                    // <<<<< RAW to image data conversion
+                    // <---- RAW to image data conversion
                 }
             }
             else
@@ -518,7 +519,7 @@ void Lepton3::thread_func()
             double elapsed = testTime1.toc();
             cout << "VoSPI segment check time " << elapsed << " usec" << "\r\n";
         }
-        // <<<<< Segment check
+        // <---- Segment check
         
         // According to datasheet, after 4 valid segments (ID 1,2,3,4) we should
         // read 8 not valid segments (ID 0)
@@ -572,7 +573,7 @@ void Lepton3::resync()
         cout << std::endl << "*** Forcing RESYNC *** [" << mResyncCount << " - " << mTotResyncCount << "]" << "\r\n";
     }
 
-    // >>>>> Resync
+    // ----> Resync
     uint8_t dummyBuf[5];
     memset(dummyBuf, 0, 5 );
     mSpiTR.rx_buf = (unsigned long)(dummyBuf); // First Packet has been read above
@@ -583,7 +584,7 @@ void Lepton3::resync()
     
     // Keeps /CS High for >=185 msec according to datasheet
     std::this_thread::sleep_for(std::chrono::microseconds(190000));
-    // <<<<< Resync
+    // <---- Resync
 
     /*mSpiTR.cs_change = 0; // Keep select after "ioctl"
     ioctl( mSpiFd, SPI_IOC_MESSAGE(1), &mSpiTR );*/
@@ -941,7 +942,7 @@ LEP_RESULT Lepton3::enableRgbOutput( bool enable )
     {
         newFormat = LEP_VIDEO_OUTPUT_FORMAT_RGB888;
         
-        // >>>>> Disable Telemetry
+        // ----> Disable Telemetry
         if( LEP_SetSysTelemetryEnableState(&mCciConnPort, LEP_TELEMETRY_DISABLED ) != LEP_OK )
         {
             cerr << "Cannot disable Telemetry" << "\r\n";
@@ -949,9 +950,9 @@ LEP_RESULT Lepton3::enableRgbOutput( bool enable )
             mBuffMutex.unlock();
             return LEP_ERROR;
         }
-        // <<<<< Disable Telemetry
+        // <---- Disable Telemetry
 
-        // >>>>> Enable AGC
+        // ----> Enable AGC
         if( LEP_SetAgcEnableState(&mCciConnPort, LEP_AGC_ENABLE ) != LEP_OK ) // RGB888 requires AGC enabled
         {
             cerr << "Cannot enable AGC" << "\r\n";
@@ -959,7 +960,7 @@ LEP_RESULT Lepton3::enableRgbOutput( bool enable )
             mBuffMutex.unlock();
             return LEP_ERROR;
         }
-        // <<<<< Enable AGC
+        // <---- Enable AGC
         
         // TODO Make function to set LUT
         if( LEP_SetVidPcolorLut(&mCciConnPort,LEP_VID_FUSION_LUT) != LEP_OK ) // Default RGB LUT
