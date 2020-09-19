@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>874</width>
-    <height>600</height>
+    <width>877</width>
+    <height>616</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -45,6 +45,15 @@
     </item>
     <item row="1" column="0">
      <widget class="QGroupBox" name="groupBox">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">font: 57 18pt &quot;Ubuntu&quot;;</string>
+      </property>
       <property name="title">
        <string/>
       </property>
@@ -53,13 +62,56 @@
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
           <widget class="QLabel" name="label_5">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>175</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>175</width>
+             <height>16777215</height>
+            </size>
+           </property>
            <property name="text">
-            <string>Body Temperature</string>
+            <string>Temperature</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="lineEdit_nearest_person_temperature"/>
+          <widget class="QLineEdit" name="lineEdit_nearest_person_temperature">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>100</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>100</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>---.- °C</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -67,26 +119,74 @@
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
           <widget class="QLabel" name="label_4">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>175</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>175</width>
+             <height>16777215</height>
+            </size>
+           </property>
            <property name="text">
             <string>Nearest Person</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QLineEdit" name="lineEdit_nearest_person"/>
+          <widget class="QLineEdit" name="lineEdit_nearest_person">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>100</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>100</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>--.- m</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
        <item row="0" column="1" rowspan="2">
-        <widget class="QLabel" name="label_6">
+        <widget class="QLabel" name="label_alert">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="styleSheet">
+          <string notr="true">font: 57 32pt &quot;Ubuntu&quot;;
+font-weight:bold;</string>
+         </property>
          <property name="text">
-          <string>Alert panel</string>
+          <string>Temperature
+N/A</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -103,7 +203,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>874</width>
+     <width>877</width>
      <height>22</height>
     </rect>
    </property>
@@ -117,6 +217,12 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="dockWidget">
+   <property name="minimumSize">
+    <size>
+     <width>200</width>
+     <height>442</height>
+    </size>
+   </property>
    <property name="features">
     <set>QDockWidget::DockWidgetVerticalTitleBar</set>
    </property>
@@ -124,7 +230,7 @@
     <set>Qt::RightDockWidgetArea</set>
    </property>
    <property name="windowTitle">
-    <string>Temperature Overlay Calibration</string>
+    <string>Configuration Panel</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
@@ -151,6 +257,54 @@
          <width>160</width>
          <height>120</height>
         </size>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_8">
+       <property name="text">
+        <string>Simulate Fever</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="QSlider" name="horizontalSlider_simul_fever">
+         <property name="maximum">
+          <number>100</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="label_simul_fever">
+         <property name="text">
+          <string>TextLabel</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="checkBox_skeleton">
+       <property name="text">
+        <string>Show Skeleton</string>
        </property>
       </widget>
      </item>
@@ -291,7 +445,7 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Overlay Calibration</string>
+    <string>Configuration Panel</string>
    </property>
   </action>
  </widget>

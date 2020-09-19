@@ -45,6 +45,10 @@ private slots:
 
     void on_checkBox_enable_calibration_clicked(bool checked);
 
+    void on_horizontalSlider_simul_fever_valueChanged(int value);
+
+    void on_checkBox_skeleton_clicked(bool checked);
+
 private:
     Ui::MainWindow *ui;
 
@@ -54,6 +58,10 @@ private:
     qint8 mOvHorOffset=0;
     qint8 mOvVerOffset=0;
     qreal mOvScale=1.0;
+
+    qreal mSimulFever=0.0;
+
+    bool mShowSkeleton=false;
 
     QLabel mZedStatusLabel;
     QLabel mLeptonStatusLabel;

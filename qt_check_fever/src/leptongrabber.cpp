@@ -92,6 +92,13 @@ void LeptonGrabber::grabFunc()
 
     uint16_t frameIdx=0;
 
+    emit statusMessage( "Performing Lepton FFC" );
+
+    if( mLepton->doFFC() == LEP_OK )
+    {
+        emit statusMessage( "Lepton FFC completed" );
+    }
+
     forever
     {
         if( mStopRequest )

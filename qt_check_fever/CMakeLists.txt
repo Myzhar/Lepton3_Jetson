@@ -67,6 +67,7 @@ set(INC
     include/zedgrabber.h
     include/leptongrabber.h
     include/oglrenderer.h
+    include/globals.h
 )
 
 set(FORMS

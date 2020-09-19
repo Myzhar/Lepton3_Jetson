@@ -55,10 +55,10 @@ const std::string STR_WARN = "FEVER WARNING";
 const std::string STR_NORM = "NO FEVER";
 const std::string STR_NO_HUMAN = "---";
 
-const double temp_min_human = 34.5f;
-const double temp_warn = 37.0f;
-const double temp_fever = 37.5f;
-const double temp_max_human = 42.0f;
+const double TEMP_MIN_HUMAN = 34.5f;
+const double TEMP_WARN = 37.0f;
+const double TEMP_FEVER = 37.5f;
+const double TEMP_MAX_HUMAN = 42.0f;
 
 const double fever_thresh = 0.05;
 // <---- Constants
@@ -180,7 +180,7 @@ int main (int argc, char *argv[])
                 curs_temp = value*temp_scale_factor+0.05;
             }
 
-            if( curs_temp >= temp_min_human && curs_temp <= temp_max_human )
+            if( curs_temp >= TEMP_MIN_HUMAN && curs_temp <= TEMP_MAX_HUMAN )
             {
                 curs_temp += simul_temp;
             }
@@ -190,7 +190,7 @@ int main (int argc, char *argv[])
             memcpy( frame16.data, data16, w*h*sizeof(uint16_t) );
 
             // ----> Normalization for displaying
-            normalizeFrame( frame16, thermFrame, temp_min_human-7.5, temp_fever+1.0, temp_scale_factor );
+            normalizeFrame( frame16, thermFrame, TEMP_MIN_HUMAN-7.5, TEMP_FEVER+1.0, temp_scale_factor );
             // Conversion to RGB
             cv::cvtColor( thermFrame, thermFrame, cv::COLOR_GRAY2BGR );
             // <---- Normalization for displaying
@@ -205,7 +205,7 @@ int main (int argc, char *argv[])
                 // Temperature from thermal data adjusted for simulation
                 double temp = (data16[i]*temp_scale_factor+0.05);
 
-                if( temp >= temp_min_human && temp <= temp_max_human )
+                if( temp >= TEMP_MIN_HUMAN && temp <= TEMP_MAX_HUMAN )
                 {
                     count_human++;
                     temp += simul_temp;
@@ -214,20 +214,20 @@ int main (int argc, char *argv[])
                     int v = i/w;
                     cv::Vec3b& temp_col = thermFrame.at<cv::Vec3b>(v,u);
 
-                    if( temp >= temp_min_human && temp < temp_warn )
+                    if( temp >= TEMP_MIN_HUMAN && temp < TEMP_WARN )
                     {
                         temp_col[0] = (double)temp_col[0]/255. * COL_NORM_TEMP[0];
                         temp_col[1] = (double)temp_col[1]/255. * COL_NORM_TEMP[1];
                         temp_col[2] = (double)temp_col[2]/255. * COL_NORM_TEMP[2];
                     }
-                    else if( temp >= temp_warn && temp < temp_fever )
+                    else if( temp >= TEMP_WARN && temp < TEMP_FEVER )
                     {
                         temp_col[0] = (double)temp_col[0]/255. * COL_WARN_TEMP[0];
                         temp_col[1] = (double)temp_col[1]/255. * COL_WARN_TEMP[1];
                         temp_col[2] = (double)temp_col[2]/255. * COL_WARN_TEMP[2];
                         count_warning++;
                     }
-                    else if( temp >= temp_fever && temp <= temp_max_human )
+                    else if( temp >= TEMP_FEVER && temp <= TEMP_MAX_HUMAN )
                     {
                         temp_col[0] = (double)temp_col[0]/255. * COL_FEVER_TEMP[0];
                         temp_col[1] = (double)temp_col[1]/255. * COL_FEVER_TEMP[1];
@@ -256,15 +256,15 @@ int main (int argc, char *argv[])
 
             // ----> Cursor temperature text info
             cv::Scalar temp_col;
-            if( curs_temp >= temp_min_human && curs_temp < temp_warn )
+            if( curs_temp >= TEMP_MIN_HUMAN && curs_temp < TEMP_WARN )
             {
                 temp_col = COL_NORM_TEMP;
             }
-            else if( curs_temp >= temp_warn && curs_temp < temp_fever )
+            else if( curs_temp >= TEMP_WARN && curs_temp < TEMP_FEVER )
             {
                 temp_col = COL_WARN_TEMP;
             }
-            else if( curs_temp >= temp_fever && curs_temp < temp_max_human )
+            else if( curs_temp >= TEMP_FEVER && curs_temp < TEMP_MAX_HUMAN )
             {
                 temp_col = COL_FEVER_TEMP;
             }

@@ -4,6 +4,7 @@
 #include <QSurfaceFormat>
 
 #include <QDebug>
+#include <QFont>
 
 OglRenderer::OglRenderer(QWidget *parent)
     : QOpenGLWidget(parent)
@@ -54,6 +55,10 @@ void OglRenderer::paintEvent(QPaintEvent*)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
+    QFont font = painter.font();
+    font.setPointSize(16);
+    painter.setFont(font);
+
     if(mOnlyFlir)
     {
         int xOffset = (this->width() - mFlirImg.width())/2;
@@ -90,7 +95,7 @@ void OglRenderer::paintEvent(QPaintEvent*)
         }
         else
         {
-            mAlphaCh.fill(QColor(mAlphaVal,mAlphaVal,mAlphaVal,mAlphaVal));
+            mAlphaCh.fill(QColor(ALPHA_VAL,ALPHA_VAL,ALPHA_VAL,ALPHA_VAL));
         }
     }
 
@@ -133,7 +138,7 @@ void OglRenderer::paintEvent(QPaintEvent*)
                 {
                     QPainter p(&mAlphaCh);
                     p.setPen(Qt::NoPen);
-                    p.setBrush(QBrush(QColor(mAlphaVal,mAlphaVal,mAlphaVal,mAlphaVal)));
+                    p.setBrush(QBrush(QColor(ALPHA_VAL,ALPHA_VAL,ALPHA_VAL,ALPHA_VAL)));
                     rect.moveCenter(QPoint(rect.center().x()-xOffset_flir,rect.center().y()-yOffset_flir));
 
                     if(!mCalibrating)
@@ -169,80 +174,108 @@ void OglRenderer::paintEvent(QPaintEvent*)
                             int i = u+v*mOcvRaw16.cols;
                             double temp = (data16[i]*temp_scale_factor+0.05);
 
-                            //qDebug() << tr("(%1,%2) Temp: %3").arg(u).arg(v).arg(temp);
-
-                            if( temp >= temp_min_human && temp <= temp_max_human )
+                            if( temp >= TEMP_MIN_HUMAN && temp <= TEMP_MAX_HUMAN )
                             {
-                                //qDebug() << tr("(%1,%2) Temp human: %3").arg(u).arg(v).arg(temp);
-                                int R,G,B;
+                                temp += mSimulFever;
 
                                 valid_count++;
                                 temp_sum += temp;
 
-                                if( temp >= temp_min_human && temp < temp_warn )
+                                QColor color;
+
+                                if( temp >= TEMP_MIN_HUMAN && temp < TEMP_WARN )
                                 {
-                                    R = COL_NORM_TEMP[0];
-                                    G = COL_NORM_TEMP[1];
-                                    B = COL_NORM_TEMP[2];
+                                    color = COL_NORM_TEMP;
                                 }
-                                else if( temp >= temp_warn && temp < temp_fever )
+                                else if( temp >= TEMP_WARN && temp < TEMP_FEVER )
                                 {
-                                    R = COL_WARN_TEMP[0];
-                                    G = COL_WARN_TEMP[1];
-                                    B = COL_WARN_TEMP[2];
+                                    color = COL_WARN_TEMP;
                                 }
-                                else if( temp >= temp_fever && temp <= temp_max_human )
+                                else if( temp >= TEMP_FEVER && temp <= TEMP_MAX_HUMAN )
                                 {
-                                    R = COL_FEVER_TEMP[0];
-                                    G = COL_FEVER_TEMP[1];
-                                    B = COL_FEVER_TEMP[2];
+                                    color = COL_FEVER_TEMP;
                                 }
 
-                                flirScaled.setPixelColor(U,V,QColor(R,G,B,mAlphaVal));
+                                flirScaled.setPixelColor(U,V,color);
                             }
                         }
                     }
                 }
             }
 
-            if(valid_count>0)
+            if(valid_count>10)
             {
                 temperature = temp_sum/valid_count;
             }
 
-            pen.setWidth(2*penSize);
-            painter.setPen(pen);
-            // ----> Ears and Eyes
-            for( int i=static_cast<int>(sl::BODY_PARTS::RIGHT_EYE); i<=static_cast<int>(sl::BODY_PARTS::LEFT_EAR); i++)
+            if(mShowSkeleton)
             {
-                float x = obj.keypoint_2d[i][0];
-                float y = obj.keypoint_2d[i][1];
+
+                pen.setWidth(2*penSize);
+                painter.setPen(pen);
+
+                float x,y;
+                // ----> Ears and Eyes
+                for( int i=static_cast<int>(sl::BODY_PARTS::RIGHT_EYE); i<=static_cast<int>(sl::BODY_PARTS::LEFT_EAR); i++)
+                {
+                    x = obj.keypoint_2d[i].x;
+                    y = obj.keypoint_2d[i].y;
+                    if( x>0 && y>0 )
+                    {
+                        painter.drawPoint(xOffset+x,yOffset+y);
+                    }
+                }
+                // <---- Ears and Eyes
+
+                // ----> Nose
+                x = obj.keypoint_2d[static_cast<int>(sl::BODY_PARTS::NOSE)].x;
+                y = obj.keypoint_2d[static_cast<int>(sl::BODY_PARTS::NOSE)].y;
                 if( x>0 && y>0 )
                 {
                     painter.drawPoint(xOffset+x,yOffset+y);
                 }
-            }
-            // <---- Ears and Eyes
+                // <---- Nose
 
-            // ----> Nose
-            float x = obj.keypoint_2d[static_cast<int>(sl::BODY_PARTS::NOSE)][0];
-            float y = obj.keypoint_2d[static_cast<int>(sl::BODY_PARTS::NOSE)][1];
+                /*/ ----> Neck
+            x = obj.keypoint_2d[static_cast<int>(sl::BODY_PARTS::NECK)].x;
+            y = obj.keypoint_2d[static_cast<int>(sl::BODY_PARTS::NECK)].y;
             if( x>0 && y>0 )
             {
                 painter.drawPoint(xOffset+x,yOffset+y);
             }
-            // <---- Nose
+            // <---- Neck */
+
+                // ----> Skeleton
+                pen.setWidth(1);
+                painter.setPen(pen);
+                //Display sekeleton if available
+                auto keypoints = obj.keypoint_2d;
+                if (keypoints.size()>0)
+                {
+                    for (auto &limb : sl::BODY_BONES)
+                    {
+                        sl::float2 kp_1 = keypoints[(int)limb.first];
+                        sl::float2 kp_2 = keypoints[(int)limb.second];
+                        if (kp_1.x>0 && kp_2.x>0)
+                        {
+                            painter.drawLine( QPointF(xOffset+kp_1.x, yOffset+kp_1.y),
+                                              QPointF(xOffset+kp_2.x, yOffset+kp_2.y));
+                        }
+                    }
+                }
+                // <---- Neck
+            }
 
             // -----> Text info
             QRect text_rect;
             text_rect.setLeft(rect_left);
             text_rect.setRight(rect_right);
             text_rect.setBottom(rect_top-5);
-            text_rect.setTop(rect_top-20);
+            text_rect.setTop(rect_top-27);
 
-            QString temp_st = "Temp: ---";
-            if( valid_count>0 ){
-                temp_st = tr("Temp: %1").arg(temp_sum/valid_count, 3, 'f', 1);
+            QString temp_st = "--.- °C";
+            if( valid_count>10 ){
+                temp_st = tr("%1 °C").arg(temp_sum/valid_count, 3, 'f', 1);
             }
             painter.drawText(text_rect, temp_st );
 
@@ -261,10 +294,13 @@ void OglRenderer::paintEvent(QPaintEvent*)
             }
             // <----- Text info
 
-            if(nose_dist<min_dist && valid_count>0)
+            if(nose_dist<min_dist)
             {
                 min_dist = nose_dist;
-                temperature = temp_sum/valid_count;
+                if(valid_count>10)
+                {
+                    temperature = temp_sum/valid_count;
+                }
             }
         }
     }
