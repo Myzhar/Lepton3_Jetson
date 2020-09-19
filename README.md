@@ -54,7 +54,7 @@ tar -xzvf cmake-$version.$build.tar.gz
 cd cmake-$version.$build/
 ```
 
-Buiild and install:
+Build and install:
 
 ```
 ./bootstrap
