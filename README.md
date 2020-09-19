@@ -34,6 +34,42 @@ $ make
 $ cd ..
 ```
 
+### Install latest CMake
+
+At least CMake 3.15 is required. Check your current version:
+
+```
+cmake --version
+```
+
+
+Download CMake 3.18 sources:
+
+```
+version=3.18
+build=1
+mkdir ~/temp
+cd ~/temp
+wget https://cmake.org/files/v$version/cmake-$version.$build.tar.gz
+tar -xzvf cmake-$version.$build.tar.gz
+cd cmake-$version.$build/
+```
+
+Buiild and install::
+``
+./bootstrap
+make -j$(nproc)
+sudo make install
+
+```
+
+Verify:
+```
+cmake --version
+```
+
+
+
 ## Camera connection
 
 <img src="images/Connections.png" width="250" height="250">

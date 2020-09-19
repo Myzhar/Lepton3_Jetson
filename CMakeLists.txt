@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8.9)
+cmake_minimum_required (VERSION 3.14)
 
 project (lepton3_jetson)
 
@@ -7,7 +7,7 @@ set(CMAKE_DEBUG_POSTFIX "_d")
 
 #########################################################
 # FLAGS
-set (CMAKE_CXX_STANDARD 11)
+set (CMAKE_CXX_STANDARD 17)
 #########################################################
 
 # Letpon3 Library source code
@@ -19,3 +19,9 @@ add_subdirectory (opencv_demo)
 # Check Fever App
 add_subdirectory (check_fever_app)
 
+# Qt ZED app
+find_package(Qt5 COMPONENTS Widgets)
+find_package(ZED 3)
+if(Qt5_FOUND AND ZED_FOUND)
+   add_subdirectory(qt_check_fever)
+endif()
