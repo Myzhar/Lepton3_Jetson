@@ -16,23 +16,9 @@ More info on Myzhar website [blog post](https://www.myzhar.com/blog/jetson-nano-
 
 ## Software Installation
 
-Clone this repository
-
-`$ git clone https://github.com/Myzhar/Lepton3_Jetson.git`
-
 Install build requirements
 
-`$ sudo apt install build-essential cmake g++ libopencv-dev`
-    
-Compile
-
-```
-$ mkdir build
-$ cd build
-$ cmake ..
-$ make
-$ cd ..
-```
+`$ sudo apt install build-essential g++ libopencv-dev`
 
 ### Install latest CMake
 
@@ -68,6 +54,22 @@ sudo make install
 Verify:
 ```
 cmake --version
+```
+
+### Build the project
+
+Clone this repository
+
+`$ git clone https://github.com/Myzhar/Lepton3_Jetson.git`
+   
+Compile
+
+```
+$ mkdir build
+$ cd build
+$ cmake ..
+$ make
+$ cd ..
 ```
 
 ## Camera connection
