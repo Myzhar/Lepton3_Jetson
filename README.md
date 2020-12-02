@@ -62,6 +62,9 @@ make -j$(nproc)
 sudo make install
 ```
 
+*Note*: in case you get an error about `OpenSSL` not found, you can install it using the command:
+`sudo apt-get install libssl-dev`
+
 Verify:
 ```
 cmake --version
