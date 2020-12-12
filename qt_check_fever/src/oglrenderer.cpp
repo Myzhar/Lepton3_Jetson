@@ -112,6 +112,9 @@ void OglRenderer::paintEvent(QPaintEvent*)
             quint8 r = (obj.id+1)*452335;
             quint8 g = (obj.id+1)*4653523;
             quint8 b = (obj.id+1)*2351366;
+            r = r>100?r:100;
+            g = g>100?g:100;
+            b = b>100?b:100;
             pen.setColor( QColor(r,g,b,175) );
             pen.setWidth(penSize);
             pen.setCapStyle(Qt::RoundCap);
@@ -246,7 +249,7 @@ void OglRenderer::paintEvent(QPaintEvent*)
             // <---- Neck */
 
                 // ----> Skeleton
-                pen.setWidth(1);
+                pen.setWidth(3);
                 painter.setPen(pen);
                 //Display sekeleton if available
                 auto keypoints = obj.keypoint_2d;

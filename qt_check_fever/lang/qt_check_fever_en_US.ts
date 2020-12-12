@@ -43,147 +43,109 @@
     <name>MainWindow</name>
     <message>
         <location filename="../src/mainwindow.ui" line="14"/>
-        <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="250"/>
-        <location filename="../../build-qt_check_fever-Desktop-Default/qt_check_fever_autogen/include/ui_mainwindow.h" line="250"/>
-        <location filename="../../build-qt_check_fever-Desktop-Release/qt_check_fever_autogen/include/ui_mainwindow.h" line="250"/>
+        <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="328"/>
         <source>Jetson Fever Control</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="253"/>
-        <location filename="../../build-qt_check_fever-Desktop-Default/qt_check_fever_autogen/include/ui_mainwindow.h" line="253"/>
-        <location filename="../../build-qt_check_fever-Desktop-Release/qt_check_fever_autogen/include/ui_mainwindow.h" line="253"/>
-        <source>Body Temperature</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.ui" line="141"/>
-        <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="254"/>
-        <location filename="../../build-qt_check_fever-Desktop-Default/qt_check_fever_autogen/include/ui_mainwindow.h" line="254"/>
-        <location filename="../../build-qt_check_fever-Desktop-Release/qt_check_fever_autogen/include/ui_mainwindow.h" line="254"/>
-        <source>Nearest Person</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="255"/>
-        <location filename="../../build-qt_check_fever-Desktop-Default/qt_check_fever_autogen/include/ui_mainwindow.h" line="255"/>
-        <location filename="../../build-qt_check_fever-Desktop-Release/qt_check_fever_autogen/include/ui_mainwindow.h" line="255"/>
-        <source>Alert panel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.ui" line="212"/>
-        <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="256"/>
-        <location filename="../../build-qt_check_fever-Desktop-Default/qt_check_fever_autogen/include/ui_mainwindow.h" line="256"/>
-        <location filename="../../build-qt_check_fever-Desktop-Release/qt_check_fever_autogen/include/ui_mainwindow.h" line="256"/>
-        <source>Configuration</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="257"/>
-        <location filename="../../build-qt_check_fever-Desktop-Default/qt_check_fever_autogen/include/ui_mainwindow.h" line="257"/>
-        <location filename="../../build-qt_check_fever-Desktop-Release/qt_check_fever_autogen/include/ui_mainwindow.h" line="257"/>
-        <source>Temperature Overlay Calibration</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.ui" line="243"/>
-        <source>Full Thermal Image</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/mainwindow.ui" line="327"/>
-        <source>Enable Calibration</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="258"/>
-        <location filename="../../build-qt_check_fever-Desktop-Default/qt_check_fever_autogen/include/ui_mainwindow.h" line="258"/>
-        <location filename="../../build-qt_check_fever-Desktop-Release/qt_check_fever_autogen/include/ui_mainwindow.h" line="258"/>
-        <source>Raw Thermal Image</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../src/mainwindow.ui" line="84"/>
+        <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="331"/>
         <source>Temperature</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="109"/>
+        <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="332"/>
         <source>---.- °C</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../src/mainwindow.ui" line="141"/>
+        <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="333"/>
+        <source>Nearest Person</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../src/mainwindow.ui" line="166"/>
+        <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="334"/>
         <location filename="../src/mainwindow.cpp" line="148"/>
         <source>--.- m</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="188"/>
+        <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="335"/>
         <location filename="../src/mainwindow.cpp" line="141"/>
         <source>Temperature
 N/A</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../src/mainwindow.ui" line="212"/>
+        <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="337"/>
+        <source>Configuration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../src/mainwindow.ui" line="233"/>
         <location filename="../src/mainwindow.ui" line="448"/>
+        <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="329"/>
+        <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="338"/>
         <source>Configuration Panel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../src/mainwindow.ui" line="243"/>
+        <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="339"/>
+        <source>Full Thermal Image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../src/mainwindow.ui" line="266"/>
+        <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="340"/>
         <source>Simulate Fever</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="285"/>
+        <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="341"/>
         <source>TextLabel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="307"/>
+        <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="342"/>
         <source>Show Skeleton</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../src/mainwindow.ui" line="327"/>
+        <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="343"/>
+        <source>Enable Calibration</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../src/mainwindow.ui" line="334"/>
-        <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="259"/>
-        <location filename="../../build-qt_check_fever-Desktop-Default/qt_check_fever_autogen/include/ui_mainwindow.h" line="259"/>
-        <location filename="../../build-qt_check_fever-Desktop-Release/qt_check_fever_autogen/include/ui_mainwindow.h" line="259"/>
+        <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="344"/>
         <source>Horiz. Offset</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="363"/>
-        <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="260"/>
-        <location filename="../../build-qt_check_fever-Desktop-Default/qt_check_fever_autogen/include/ui_mainwindow.h" line="260"/>
-        <location filename="../../build-qt_check_fever-Desktop-Release/qt_check_fever_autogen/include/ui_mainwindow.h" line="260"/>
+        <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="345"/>
         <source>Vert. Offset</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="392"/>
-        <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="261"/>
-        <location filename="../../build-qt_check_fever-Desktop-Default/qt_check_fever_autogen/include/ui_mainwindow.h" line="261"/>
-        <location filename="../../build-qt_check_fever-Desktop-Release/qt_check_fever_autogen/include/ui_mainwindow.h" line="261"/>
+        <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="346"/>
         <source>Scale factor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/mainwindow.ui" line="433"/>
-        <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="262"/>
-        <location filename="../../build-qt_check_fever-Desktop-Default/qt_check_fever_autogen/include/ui_mainwindow.h" line="262"/>
-        <location filename="../../build-qt_check_fever-Desktop-Release/qt_check_fever_autogen/include/ui_mainwindow.h" line="262"/>
+        <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="347"/>
         <source>Reset</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../build/qt_check_fever/qt_check_fever_autogen/include/ui_mainwindow.h" line="251"/>
-        <location filename="../../build-qt_check_fever-Desktop-Default/qt_check_fever_autogen/include/ui_mainwindow.h" line="251"/>
-        <location filename="../../build-qt_check_fever-Desktop-Release/qt_check_fever_autogen/include/ui_mainwindow.h" line="251"/>
-        <source>Overlay Calibration</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>877</width>
-    <height>616</height>
+    <height>672</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,35 +15,7 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QWidget" name="widget" native="true">
-      <layout class="QGridLayout" name="gridLayout_3">
-       <item row="0" column="0">
-        <widget class="OglRenderer" name="openGLWidget_img">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>640</width>
-           <height>376</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>640</width>
-           <height>376</height>
-          </size>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </item>
-    <item row="1" column="0">
+    <item row="3" column="0">
      <widget class="QGroupBox" name="groupBox">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -52,13 +24,13 @@
        </sizepolicy>
       </property>
       <property name="styleSheet">
-       <string notr="true">font: 57 18pt &quot;Ubuntu&quot;;</string>
+       <string notr="true">font: 57 20pt &quot;Ubuntu&quot;;</string>
       </property>
       <property name="title">
        <string/>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
-       <item row="1" column="0">
+       <item row="2" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
           <widget class="QLabel" name="label_5">
@@ -70,7 +42,7 @@
            </property>
            <property name="minimumSize">
             <size>
-             <width>175</width>
+             <width>200</width>
              <height>0</height>
             </size>
            </property>
@@ -115,7 +87,7 @@
          </item>
         </layout>
        </item>
-       <item row="0" column="0">
+       <item row="1" column="0">
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
           <widget class="QLabel" name="label_4">
@@ -127,7 +99,7 @@
            </property>
            <property name="minimumSize">
             <size>
-             <width>175</width>
+             <width>200</width>
              <height>0</height>
             </size>
            </property>
@@ -172,7 +144,7 @@
          </item>
         </layout>
        </item>
-       <item row="0" column="1" rowspan="2">
+       <item row="1" column="1" rowspan="2">
         <widget class="QLabel" name="label_alert">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
@@ -181,7 +153,7 @@
           </sizepolicy>
          </property>
          <property name="styleSheet">
-          <string notr="true">font: 57 32pt &quot;Ubuntu&quot;;
+          <string notr="true">font: 57 38pt &quot;Ubuntu&quot;;
 font-weight:bold;</string>
          </property>
          <property name="text">
@@ -194,6 +166,47 @@ N/A</string>
         </widget>
        </item>
       </layout>
+     </widget>
+    </item>
+    <item row="1" column="0">
+     <widget class="QWidget" name="widget" native="true">
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="0">
+        <widget class="OglRenderer" name="openGLWidget_img">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>640</width>
+           <height>376</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>640</width>
+           <height>376</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_6">
+      <property name="styleSheet">
+       <string notr="true">font: 57 24pt &quot;Ubuntu&quot;;</string>
+      </property>
+      <property name="text">
+       <string>&lt;B&gt;Jetson Fever Control against COVID19&lt;/B&gt;</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
      </widget>
     </item>
    </layout>
