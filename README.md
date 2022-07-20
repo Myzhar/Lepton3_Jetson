@@ -14,6 +14,8 @@ More info on Myzhar website [blog post](https://www.myzhar.com/blog/jetson-nano-
 * OpenCV library to compile the examples
 * CMake > 2.8.9
 
+**Note**: as pointed out by @ma-ludw in [this issue](https://github.com/Myzhar/Lepton3_Jetson/issues/14), it is highly recommended to run the `jetson_clocks.sh` script in order to obtain the maximum performances from the Jetson Nano and hence reduce the amount of missed frames.
+
 ## Software Installation
 
 Install build requirements
